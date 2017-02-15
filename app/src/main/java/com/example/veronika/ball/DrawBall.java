@@ -23,16 +23,6 @@ public class DrawBall extends View {
     protected void onDraw(Canvas canvas) {
         Log.i("trace", "onDraw() called");
         super.onDraw(canvas);
-        //// Create a LinearLayout in which to add the ImageView
-        //mLinearLayout = new LinearLayout(this);
-        //drawPath = new Path();
-        //drawPaint = new Paint();
-        //drawPaint.setColor(paintColor);
-        //drawPaint.setAntiAlias(true);
-        //drawPaint.setStrokeWidth(20);
-        //drawPaint.setStyle(Paint.Style.STROKE);
-        //drawPaint.setStrokeJoin(Paint.Join.ROUND);
-        //drawPaint.setStrokeCap(Paint.Cap.ROUND);
         Paint mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mTextPaint.setColor(0xff808000);
         canvas.drawCircle(200, 200, 50, mTextPaint);
