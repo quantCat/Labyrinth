@@ -3,6 +3,8 @@ package com.example.veronika.ball;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -12,19 +14,23 @@ import android.view.View;
  */
 
 public class DrawBall extends View {
-    public DrawBall(Context context) {
-        super(context);
-        Log.i("trace", "DrawBall/1()");
-    }
+    public static Ball ball = new Ball();
+    float[] values;
+
     public DrawBall(Context context, AttributeSet attrs) {
         super(context, attrs);
         Log.i("trace", "DrawBall/2()");
     }
+
+    void coordChange () {
+        values = MainActivity.pc.valuesAccel;
+        ball.coordChange(values[0], values[1], getWidth(), getHeight());
+        invalidate();
+    }
+
     protected void onDraw(Canvas canvas) {
-        Log.i("trace", "onDraw() called");
+        //Log.i("trace", "onDraw() called");
         super.onDraw(canvas);
-        Paint mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mTextPaint.setColor(0xff808000);
-        canvas.drawCircle(200, 200, 50, mTextPaint);
+        ball.draw(canvas);
     }
 }

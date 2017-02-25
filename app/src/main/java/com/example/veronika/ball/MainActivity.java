@@ -5,17 +5,22 @@ import android.hardware.SensorManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static android.R.attr.id;
+import static com.example.veronika.ball.R.id.view;
+
 public class MainActivity extends AppCompatActivity {
 
     TextView tvText;
-    PositionCheck pc;
+    public static PositionCheck pc;
     Timer timer;
     StringBuilder sb = new StringBuilder();
+    DrawBall drawBall;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,11 +48,13 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         showInfo();
+                        drawBall = (DrawBall)findViewById(R.id.view);
+                        drawBall.coordChange();
                     }
                 });
             }
         };
-        timer.schedule(task, 0, 400);
+        timer.schedule(task, 0, 100);
     }
 
     @Override
