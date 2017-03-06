@@ -18,6 +18,8 @@ class Ball {
     protected static int color = Color.BLACK;
     private float x;
     private float y;
+    private float vx;
+    private float vy;
     private float Radius = 50;
 
     public float getX() {
@@ -29,12 +31,22 @@ class Ball {
     }
 
     public void coordChange (float dX, float dY, int width, int height) {
-        x+=dX;
-        y+=dY;
+        vx+=dX/100;
+        vy+=dY/100;
+        vx *= 0.5; //friction
+        vy *= 0.5;
+        x+=vx;
+        y+=vy;
         x = max(x, Radius);
         y = max(y, Radius);
         x = min(x, width - Radius);
         y = min(y, height - Radius);
+        if (x == 0 || x == width) {
+            vx = 0;
+        }
+        if (y == 0 || y == height) {
+            vy = 0;
+        }
         Log.i("trace", String.format("coordChange: %.3f %.3f", x, y));
     }
 
