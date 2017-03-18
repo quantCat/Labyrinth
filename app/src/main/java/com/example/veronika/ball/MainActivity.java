@@ -1,26 +1,28 @@
 package com.example.veronika.ball;
 
+import android.app.ActivityManager;
+import android.content.Context;
+import android.content.pm.ConfigurationInfo;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.opengl.GLSurfaceView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static android.R.attr.id;
-import static com.example.veronika.ball.R.id.view;
-
 public class MainActivity extends AppCompatActivity {
 
     TextView tvText;
-    public static PositionCheck pc;
+    public PositionCheck pc;
     Timer timer;
     StringBuilder sb = new StringBuilder();
     DrawBall drawBall;
+    GLSurfaceView glSurfaceView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,22 +35,33 @@ public class MainActivity extends AppCompatActivity {
         Sensor sensorAccel = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
         pc = new PositionCheck(this);
+        if (!supportES2()) {
+            Toast.makeText(this, "OpenGl ES 2.0 is not supported", Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+        glSurfaceView = new GLSurfaceView(this);
+        glSurfaceView.setEGLContextClientVersion(2);
+        glSurfaceView.setRenderer(new OpenGLRenderer(this));
+        setContentView(glSurfaceView);
+        drawBall = new DrawBall(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        glSurfaceView.onResume();
         pc.onResume();
 
         timer = new Timer();
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                runOnUiThread(new Runnable() {
+                runOnUiThread (new Runnable() {
                     @Override
                     public void run() {
                         showInfo();
-                        drawBall = (DrawBall)findViewById(R.id.view);
+                        //drawBall = (DrawBall)findViewById(R.id.view);
                         drawBall.coordChange();
                     }
                 });
@@ -60,8 +73,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        glSurfaceView.onPause();
         pc.onPause();
         timer.cancel();
+    }
+
+    private boolean supportES2() {
+        ActivityManager activityManager =
+                (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
+        return (configurationInfo.reqGlEsVersion >= 0x20000);
     }
 
     void showInfo() {
