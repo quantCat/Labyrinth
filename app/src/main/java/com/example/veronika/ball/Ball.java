@@ -41,11 +41,20 @@ class Ball {
         y = max(y, Radius);
         x = min(x, width - Radius);
         y = min(y, height - Radius);
-        if (x == 0 || x == width) {
+        if (x <= 0 + Radius) {
             vx = 0;
+            x = 0 + Radius;
+        } else if (x >= width - Radius) {
+            vx = 0;
+            x = width - Radius;
         }
-        if (y == 0 || y == height) {
+
+        if (y <= 0 + Radius) {
             vy = 0;
+            y = 0 + Radius;
+        } else if (y >= height - Radius) {
+            vy = 0;
+            y = height - Radius;
         }
         Log.i("trace", String.format("coordChange: %.3f %.3f", x, y));
     }
