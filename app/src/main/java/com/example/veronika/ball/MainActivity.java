@@ -18,11 +18,13 @@ import java.util.TimerTask;
 public class MainActivity extends AppCompatActivity {
 
     TextView tvText;
-    public PositionCheck pc;
+    PositionCheck pc;
     Timer timer;
     StringBuilder sb = new StringBuilder();
-    DrawBall drawBall;
     GLSurfaceView glSurfaceView;
+    static Ball ball = new Ball();
+    float[] values;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,9 +44,10 @@ public class MainActivity extends AppCompatActivity {
         }
         glSurfaceView = new GLSurfaceView(this);
         glSurfaceView.setEGLContextClientVersion(2);
-        glSurfaceView.setRenderer(new OpenGLRenderer(this));
+        OpenGLRenderer rr = new OpenGLRenderer(this);
+        rr.activity = this;
+        glSurfaceView.setRenderer(rr);
         setContentView(glSurfaceView);
-        drawBall = new DrawBall(this);
     }
 
     @Override
@@ -61,8 +64,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         showInfo();
-                        //drawBall = (DrawBall)findViewById(R.id.view);
-                        drawBall.coordChange();
+                        coordChange();
                     }
                 });
             }
@@ -83,6 +85,12 @@ public class MainActivity extends AppCompatActivity {
                 (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
         return (configurationInfo.reqGlEsVersion >= 0x20000);
+    }
+
+    void coordChange () {
+        values = pc.valuesAccel;
+        ball.coordChange(values[0], values[1], glSurfaceView.getWidth(), glSurfaceView.getHeight());
+        glSurfaceView.invalidate();
     }
 
     void showInfo() {

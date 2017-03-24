@@ -6,6 +6,9 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.Log;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
@@ -21,6 +24,8 @@ class Ball {
     private float vx;
     private float vy;
     private float Radius = 50;
+    static float move_x;
+    static float move_y;
 
     public float getX() {
         return x;
@@ -31,10 +36,10 @@ class Ball {
     }
 
     public void coordChange (float dX, float dY, int width, int height) {
-        vx+=dX/100;
-        vy+=dY/100;
-        vx *= 0.5; //friction
-        vy *= 0.5;
+        vx+=dX/2;
+        vy+=dY/2;
+        vx *= 0.9; //friction
+        vy *= 0.9;
         x+=vx;
         y+=vy;
         x = max(x, Radius);
@@ -57,12 +62,15 @@ class Ball {
             y = height - Radius;
         }
         Log.i("trace", String.format("coordChange: %.3f %.3f", x, y));
+        move_x = (x - width/2)/width;
+        move_y = (y - height/2)/height;
     }
 
-    public void draw(Canvas canvas) {
+   /* public void draw(Canvas canvas) {
         Paint ballPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         ballPaint.setColor(0xff808000);
-        canvas.drawCircle(x, y, 50, ballPaint);
-    }
+       // canvas.drawCircle(x, y, 50, ballPaint);
+        float move_x = (float)x/
+    }*/
 
 }
