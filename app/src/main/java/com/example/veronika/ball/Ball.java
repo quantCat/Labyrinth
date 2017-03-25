@@ -23,7 +23,7 @@ class Ball {
     private float y;
     private float vx;
     private float vy;
-    private float Radius = 50;
+    private float Radius;
     static float move_x;
     static float move_y;
 
@@ -36,6 +36,7 @@ class Ball {
     }
 
     public void coordChange (float dX, float dY, int width, int height) {
+        Radius = 0.3f*width/2;
         vx+=dX/2;
         vy+=dY/2;
         vx *= 0.9; //friction
@@ -61,9 +62,9 @@ class Ball {
             vy = 0;
             y = height - Radius;
         }
-        Log.i("trace", String.format("coordChange: %.3f %.3f", x, y));
-        move_x = (x - width/2)/width;
-        move_y = (y - height/2)/height;
+        //Log.i("trace", String.format("coordChange: x=%.3f y=%.3f width=%d height=%d", x, y, width, height));
+        move_x = (2*x - width)/width;
+        move_y = (2*y - height)/height;
     }
 
    /* public void draw(Canvas canvas) {

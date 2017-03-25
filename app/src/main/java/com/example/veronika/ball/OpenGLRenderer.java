@@ -47,7 +47,7 @@ public class OpenGLRenderer implements Renderer {
 
     @Override
     public void onSurfaceCreated(GL10 arg0, EGLConfig arg1) {
-        glClearColor(0.3f, 0.3f, 0.8f, 1f);
+        glClearColor(0.4f, 0.4f, 0.9f, 1f);
         int vertexShaderId = ShaderUtils.createShader(context, GL_VERTEX_SHADER, R.raw.vertex_shader);
         int fragmentShaderId = ShaderUtils.createShader(context, GL_FRAGMENT_SHADER, R.raw.fragment_shader);
         programId = ShaderUtils.createProgram(vertexShaderId, fragmentShaderId);
@@ -89,7 +89,7 @@ public class OpenGLRenderer implements Renderer {
     }
 
     private void ballGenerate() {
-        final float Radius = 0.5f;
+        final float Radius = 0.3f;
         base_vertices = new float[2*(VERBS +2)];
         vertices      = new float[2*(VERBS +2)];
         base_vertices[0] = base_vertices[1] = 0.0f;

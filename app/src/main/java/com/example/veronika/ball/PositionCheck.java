@@ -25,7 +25,7 @@ public class PositionCheck {
         @Override
         public void onSensorChanged(SensorEvent event) {
             valuesAccel[0] = -event.values[0]; // X is reversed
-            valuesAccel[1] = event.values[1];
+            valuesAccel[1] = -event.values[1];
         }
 
     };
