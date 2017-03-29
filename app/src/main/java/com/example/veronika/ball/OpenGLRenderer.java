@@ -77,10 +77,10 @@ public class OpenGLRenderer implements Renderer {
     }
 
     @Override public void onDrawFrame(GL10 arg0) {
-        Log.i("trace", String.format("onDrawFrame: %.3f %.3f", Ball.move_x, Ball.move_y));
+        Log.i("trace", String.format("onDrawFrame: %.3f %.3f", Ball.ball_x, Ball.ball_y));
         for (int i = 0; i <= VERBS +1; i++) {
-            vertices[2*i] = base_vertices[2*i] + Ball.move_x;
-            vertices[2*i+1] = base_vertices[2*i+1] + Ball.move_y;
+            vertices[2*i] = base_vertices[2*i] + Ball.ball_x;
+            vertices[2*i+1] = base_vertices[2*i+1] + Ball.ball_y;
         }
         vertexData.position(0);
         vertexData.put(vertices);

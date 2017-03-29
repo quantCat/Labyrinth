@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     GLSurfaceView glSurfaceView;
     static Ball ball = new Ball();
     float[] values;
+    Labyrinth labyrinth;
 
 
     @Override
@@ -48,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
         rr.activity = this;
         glSurfaceView.setRenderer(rr);
         setContentView(glSurfaceView);
+        labyrinth = new Labyrinth();
+        labyrinth.readWalls(this);
     }
 
     @Override
