@@ -70,7 +70,7 @@ public class OpenGLRenderer implements Renderer {
 
     private void bindData() {
         uColorLocation = glGetUniformLocation(programId, "u_Color");
-        glUniform4f(uColorLocation, 1.0f, 1.0f, 1.0f, 1.0f);
+        glUniform4f(uColorLocation, 0.78039f, 0.65882f, 0.92941f, 1.0f); // C7A8ED == lilac
         aPositionLocation = glGetAttribLocation(programId, "a_Position");
         glVertexAttribPointer(aPositionLocation, 2, GL_FLOAT, false, 0, vertexData);
         glEnableVertexAttribArray(aPositionLocation);
