@@ -6,6 +6,7 @@ import javax.microedition.khronos.opengles.GL10;
 import static android.opengl.GLES20.GL_COLOR_BUFFER_BIT;
 import static android.opengl.GLES20.glClear;
 import static android.opengl.GLES20.glClearColor;
+import static android.opengl.GLES20.glVertexAttrib1f;
 import static android.opengl.GLES20.glViewport;
 
 import android.opengl.GLSurfaceView.Renderer;
@@ -37,6 +38,7 @@ public class OpenGLRenderer implements Renderer {
     float vertices[];
     private int uColorLocation;
     private int aBallLocation;
+    private int aWhatDrawLocation;
     private float ratio;
     int VERBS = 50;
     MainActivity activity;
@@ -74,6 +76,7 @@ public class OpenGLRenderer implements Renderer {
         aBallLocation = glGetAttribLocation(programId, "a_Ball");
         glVertexAttribPointer(aBallLocation, 2, GL_FLOAT, false, 0, vertexData);
         glEnableVertexAttribArray(aBallLocation);
+        aWhatDrawLocation = glGetAttribLocation(programId, "a_WhatDraw");
     }
 
     @Override public void onDrawFrame(GL10 arg0) {
@@ -85,6 +88,7 @@ public class OpenGLRenderer implements Renderer {
         vertexData.position(0);
         vertexData.put(vertices);
         glClear(GL_COLOR_BUFFER_BIT);
+        glVertexAttrib1f(aWhatDrawLocation, 1.0f);
         glDrawArrays(GL_TRIANGLE_FAN, 0, VERBS +2);
     }
 

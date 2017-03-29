@@ -1,5 +1,8 @@
 attribute vec4 a_Ball;
+attribute float a_WhatDraw;
 
 void main() {
-    gl_Position = a_Ball;
+    if (a_WhatDraw == 1.0) {
+        gl_Position = a_Ball;
+    }
 }
