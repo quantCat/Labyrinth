@@ -36,7 +36,7 @@ public class OpenGLRenderer implements Renderer {
     float base_vertices[];
     float vertices[];
     private int uColorLocation;
-    private int aPositionLocation;
+    private int aBallLocation;
     private float ratio;
     int VERBS = 50;
     MainActivity activity;
@@ -71,9 +71,9 @@ public class OpenGLRenderer implements Renderer {
     private void bindData() {
         uColorLocation = glGetUniformLocation(programId, "u_Color");
         glUniform4f(uColorLocation, 0.78039f, 0.65882f, 0.92941f, 1.0f); // C7A8ED == lilac
-        aPositionLocation = glGetAttribLocation(programId, "a_Position");
-        glVertexAttribPointer(aPositionLocation, 2, GL_FLOAT, false, 0, vertexData);
-        glEnableVertexAttribArray(aPositionLocation);
+        aBallLocation = glGetAttribLocation(programId, "a_Ball");
+        glVertexAttribPointer(aBallLocation, 2, GL_FLOAT, false, 0, vertexData);
+        glEnableVertexAttribArray(aBallLocation);
     }
 
     @Override public void onDrawFrame(GL10 arg0) {
