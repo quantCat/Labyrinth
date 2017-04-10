@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1"
+    android:background="@android:color/holo_blue_dark">
+
+    <Button
+        android:text="NEW GAME"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/button_new_game"
+        android:layout_weight="0.22" />
+
+    <Button
+        android:text="CONTINUE GAME"
+        android:layout_width="match_parent"
+        android:id="@+id/button_continue_game"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.19" />
+
+    <Button
+        android:text="SETTINGS"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/button_settings"
+        android:layout_weight="0.17" />
+
+    <Button
+        android:text="HELP"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/button_help"
+        android:layout_weight="0.11" />
+
+    <Button
+        android:text="CREDITS"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/button_credits"
+        android:layout_weight="0.13" />
+
+    <Button
+        android:text="QUIT"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/button_quit"
+        android:layout_weight="0.13" />
+</LinearLayout>
