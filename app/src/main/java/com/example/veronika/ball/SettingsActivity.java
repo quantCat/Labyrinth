@@ -17,7 +17,7 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings_activity);
         RadioGroup radioGroup = (RadioGroup)findViewById(R.id.radio_level);
-        final Intent menu_intent = new Intent(this, MainActivity.class);
+        final Intent menu_intent = new Intent(this, StartActivity.class);
         final Button bOK = (Button) findViewById(R.id.ok_btn);
         bOK.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
