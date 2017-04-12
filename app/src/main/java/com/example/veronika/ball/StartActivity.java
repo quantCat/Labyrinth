@@ -18,7 +18,6 @@ public class StartActivity extends AppCompatActivity {
         setContentView(R.layout.start_activity);
         final Intent game_intent = new Intent(this, MainActivity.class);
         final Button bNewGame = (Button) findViewById(R.id.button_new_game);
-        Log.i("debug", String.format("bNewGame=%s", bNewGame));
         bNewGame.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 startActivity(game_intent);

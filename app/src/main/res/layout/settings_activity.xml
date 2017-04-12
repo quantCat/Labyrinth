@@ -11,7 +11,152 @@
     tools:context="com.example.veronika.ball.MainActivity">
 
     <TextView
+        android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Some text" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="12dp"
+        android:text="Settings"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:textColor="@android:color/holo_blue_dark" />
+
+    <TextView
+        android:id="@+id/music_caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/title"
+        android:layout_marginTop="11dp"
+        android:text="Music volume"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+    <SeekBar
+        android:id="@+id/music_seekbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/music_caption"
+        android:thumbTint="@color/colorPrimaryDark"
+        android:progressTint="@color/colorPrimaryDark"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:id="@+id/sound_caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sound volume"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:layout_below="@+id/music_seekbar"
+        android:layout_marginTop="13dp" />
+
+    <SeekBar
+        android:id="@+id/sound_seekbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/sound_caption"
+        android:thumbTint="@color/colorPrimaryDark"
+        android:progressTint="@color/colorPrimaryDark"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:id="@+id/level_option"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Graphics quality"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:layout_marginTop="14dp"
+        android:layout_below="@+id/sound_seekbar"
+        android:layout_alignLeft="@+id/radio_level"
+        android:layout_alignStart="@+id/radio_level" />
+
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/radio_level"
+        android:layout_below="@+id/level_option">
+
+        <RadioButton
+            android:id="@+id/easy_option"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Easy"
+            android:buttonTint="@color/colorPrimaryDark"/>
+
+        <RadioButton
+            android:id="@+id/hard_option"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hard"
+            android:buttonTint="@color/colorPrimaryDark"
+            android:layout_below="@+id/higher_option"
+            android:layout_alignRight="@+id/easy_option"
+            android:layout_alignEnd="@+id/easy_option" />
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/quality_caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Graphics quality"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:layout_marginTop="14dp"
+        android:layout_below="@+id/radio_level"
+        android:layout_alignLeft="@+id/radio_quality"
+        android:layout_alignStart="@+id/radio_quality" />
+
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/radio_quality"
+        android:layout_below="@+id/quality_caption">
+
+        <RadioButton
+            android:id="@+id/lower_option"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Low"
+            android:buttonTint="@color/colorPrimaryDark" />
+
+        <RadioButton
+            android:id="@+id/higher_option"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="High"
+            android:buttonTint="@color/colorPrimaryDark"
+            android:layout_below="@+id/higher_option"
+            android:layout_alignRight="@+id/higher_option"
+            android:layout_alignEnd="@+id/higher_option" />
+    </RadioGroup>
+
+
+
+    <Button
+        android:id="@+id/ok_btn"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="148dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_column="0"
+        android:layout_row="29"
+        android:background="@android:color/holo_blue_dark"
+        android:text="OK" />
+
+    <Button
+        android:id="@+id/cancel_btn"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="148dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_column="0"
+        android:layout_row="1"
+        android:background="@android:color/holo_blue_dark"
+        android:text="CANCEL" />
 </RelativeLayout>
