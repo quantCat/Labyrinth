@@ -39,6 +39,15 @@ public class MainActivity extends AppCompatActivity {
         Sensor sensorAccel = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
         pc = new PositionCheck(this);
+        loadLabyrinth();
+        drawer = (Drawer) findViewById(R.id.view);
+        drawer.ball.labyrinth = labyrinth;
+        drawer.labyrinth = labyrinth;
+    }
+
+    private void loadLabyrinth() {
+        labyrinth = new Labyrinth();
+        labyrinth.readWalls(this);
     }
 
     @Override
@@ -79,11 +88,8 @@ public class MainActivity extends AppCompatActivity {
 
     void showInfo() {
         sb.setLength(0);
-        sb.append("Accelerometer: " + format(pc.valuesAccel));
+        sb.append(String.format("Acc: %.2f %.2f Pos: %.2f %.2f",
+                pc.valuesAccel[0], pc.valuesAccel[1], drawer.ball.getX(), drawer.ball.getY()));
         tvText.setText(sb);
-    }
-
-    String format(float values[]) {
-        return String.format("%1$.1f\t\t%2$.1f", values[0], values[1]);
     }
 }

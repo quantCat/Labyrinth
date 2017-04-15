@@ -17,11 +17,11 @@ class Ball {
     protected static int color = Color.BLACK;
     private float x;
     private float y;
-    private float vx;
-    private float vy;
-    private float Radius;
-    //static float ball_x;
-    //static float ball_y;
+    private float vx; // speed by X
+    private float vy; // speed by Y
+    Labyrinth labyrinth = null;
+    final float Radius = 10.0f;
+    final float MAX_SPEED = 20.0f;
 
     public float getX() {
         return x;
@@ -31,45 +31,36 @@ class Ball {
         return y;
     }
 
-    public void coordChange (float dX, float dY, int width, int height) {
-        Radius = 0.3f*width/2;
-        vx+=dX/2;
-        vy+=dY/2;
+    public void coordChange (float dX, float dY) {
+        vx += dX * 0.05;
+        vy += dY * 0.05;
         vx *= 0.9; //friction
         vy *= 0.9;
+        if (vx >  MAX_SPEED) { vx =  MAX_SPEED; }
+        if (vx < -MAX_SPEED) { vx = -MAX_SPEED; }
+        if (vy >  MAX_SPEED) { vy =  MAX_SPEED; }
+        if (vy < -MAX_SPEED) { vy = -MAX_SPEED; }
+
         x+=vx;
         y+=vy;
-       //x = max(x, Radius);
-       // y = max(y, Radius);
-        x = min(x, width - Radius);
-        y = min(y, height - Radius);
-        if (x <= 0 + Radius) {
-            vx = 0;
-            x = 0 + Radius;
-        } else if (x >= width - Radius) {
-            vx = 0;
-            x = width - Radius;
-        }
+        if (x < Radius) { x = Radius; }
+        if (x > labyrinth.size.x - Radius) { x = labyrinth.size.x - Radius; }
+        if (y < Radius) { y = Radius; }
+        if (y > labyrinth.size.y - Radius) { y = labyrinth.size.y - Radius; }
 
-        if (y <= 0 + Radius) {
-            vy = 0;
-            y = 0 + Radius;
-        } else if (y >= height - Radius) {
-            vy = 0;
-            y = height - Radius;
-        }
-        //Log.i("trace", String.format("coordChange: x=%.3f y=%.3f width=%d height=%d", x, y, width, height));
-        //ball_x = (2*x - width)/width;
-        //ball_y = (2*y - height)/height;
+        //Log.i("trace", String.format("Ball.coordChange: x=%.3f y=%.3f vx=%.3f vy=%.3f", x, y, vx, vy));
+        //Log.i("trace", String.format("Ball.coordChange: x=%.3f y=%.3f width=%d height=%d", x, y, width, height));
     }
 
 
 
 
-    public void draw(Canvas canvas) {
+    public void draw(Canvas canvas, int width, int height) {
+        final int min_dim = Math.min(width, height);
+        final float ball_radius = min_dim / 10.0f;
         Paint ballPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         ballPaint.setColor(0xff808000);
-        canvas.drawCircle(x, y, 50, ballPaint);
+        canvas.drawCircle(width/2, height/2, ball_radius, ballPaint);
     }
 
 }

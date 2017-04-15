@@ -11,24 +11,29 @@ import android.view.View;
  */
 
 public class Drawer extends View {
-    public static Ball ball = new Ball();
+    Ball ball = null;
+    Labyrinth labyrinth = null;
     float[] values;
 
     public Drawer(Context context, AttributeSet attrs) {
         super(context, attrs);
-        Log.i("trace", "DrawBall/2()");
+        Log.i("trace", "Drawer()");
+        ball = new Ball();
     }
 
     void coordChange () {
         values = MainActivity.pc.valuesAccel;
         //Log.i("Drawer.coordChange", String.format("%.3f %.3f", values[0], values[1]));
-        Drawer.ball.coordChange(values[0], values[1], getWidth(), getHeight());
+        ball.coordChange(values[0], values[1]);
         invalidate();
     }
 
     protected void onDraw(Canvas canvas) {
         //Log.i("trace", "onDraw() called");
+        int width = getWidth();
+        int height = getHeight();
         super.onDraw(canvas);
-        ball.draw(canvas);
+        ball.draw(canvas, width, height);
+        labyrinth.draw(canvas, ball, width, height);
     }
 }

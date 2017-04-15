@@ -2,6 +2,9 @@ package com.example.veronika.ball;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -32,6 +35,7 @@ public class Labyrinth {
     };
     ArrayList <Wall> walls;
     Point start, finish;
+    Point size;
 
     void readWalls(Context context) {
         walls = new ArrayList<>();
@@ -68,6 +72,12 @@ public class Labyrinth {
                         finish = new Point(x0, y0);
                     }
 
+                    if (kind.equals("size")) {
+                        int x0 = lrs.nextInt();
+                        int y0 = lrs.nextInt();
+                        size = new Point(x0, y0);
+                    }
+
                 }
             } finally {
                 if (bufferedReader != null) {
@@ -95,5 +105,30 @@ public class Labyrinth {
 
     boolean cross (int fb, int fe, int sb, int se) {
         return ( ( Math.min(fb, fe) < Math.max(sb, se) ) != ( Math.max(fb, fe) < Math.min(sb, se) ) );
+    }
+
+    public void draw(Canvas canvas, Ball ball, int width, int height) {
+        final float min_dim = Math.min(width, height);
+        final float x_viewPoint = (float) width * 100.0f / min_dim;
+        final float y_viewPoint = (float) height * 100.0f / min_dim;
+        final int x_view_min = (int) Math.floor(ball.getX() - x_viewPoint * 0.5f);
+        final int x_view_max = (int) Math.ceil(ball.getX() + x_viewPoint * 0.5f);
+        final int y_view_min = (int) Math.floor(ball.getY() - y_viewPoint * 0.5f);
+        final int y_view_max = (int) Math.ceil(ball.getY() + y_viewPoint * 0.5f);
+        ArrayList <Wall> vis_walls = visibleWalls(x_view_min, y_view_min, x_view_max, y_view_max);
+        //Log.i("Labyrinth.draw", String.format("screen=%d:%d ball=%.3f:%.3f viewport: %d-%d %d-%d %d walls, %d visible walls",
+        //        width, height, ball.getX(), ball.getY(),
+        //        x_view_min, x_view_max, y_view_min, y_view_max,
+        //        walls.size(), vis_walls.size()));
+        Paint wallPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        wallPaint.setColor(0xffff0000);
+        for (int i = 0; i < vis_walls.size(); ++i) {
+            Wall wall = vis_walls.get(i);
+            float x0 = (wall.begin.x - x_view_min) * (float) width / x_viewPoint;
+            float x1 = (wall.end.x - x_view_min) * (float) width / x_viewPoint;
+            float y0 = (wall.begin.y - y_view_min) * (float) height / y_viewPoint;
+            float y1 = (wall.end.y - y_view_min) * (float) height / y_viewPoint;
+            canvas.drawLine(x0, y0, x1, y1, wallPaint);
+        }
     }
 }
