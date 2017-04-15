@@ -19,13 +19,12 @@ import java.util.TimerTask;
 public class MainActivity extends AppCompatActivity {
 
     TextView tvText;
-    PositionCheck pc;
+    public static PositionCheck pc;
     Timer timer;
     StringBuilder sb = new StringBuilder();
-    GLSurfaceView glSurfaceView;
-    static Ball ball = new Ball();
     float[] values;
     Labyrinth labyrinth;
+    Drawer drawer;
 
 
     @Override
@@ -40,36 +39,23 @@ public class MainActivity extends AppCompatActivity {
         Sensor sensorAccel = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
         pc = new PositionCheck(this);
-        if (!supportES2()) {
-            Toast.makeText(this, "OpenGl ES 2.0 is not supported", Toast.LENGTH_LONG).show();
-            finish();
-            return;
-        }
-        glSurfaceView = new GLSurfaceView(this);
-        glSurfaceView.setEGLContextClientVersion(2);
-        OpenGLRenderer rr = new OpenGLRenderer(this);
-        rr.activity = this;
-        glSurfaceView.setRenderer(rr);
-        setContentView(glSurfaceView);
-        labyrinth = new Labyrinth();
-        labyrinth.readWalls(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        glSurfaceView.onResume();
         pc.onResume();
 
         timer = new Timer();
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                runOnUiThread (new Runnable() {
+                runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         showInfo();
-                        coordChange();
+                        drawer = (Drawer)findViewById(R.id.view);
+                        drawer.coordChange();
                     }
                 });
             }
@@ -80,7 +66,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        glSurfaceView.onPause();
         pc.onPause();
         timer.cancel();
     }
@@ -92,19 +77,9 @@ public class MainActivity extends AppCompatActivity {
         return (configurationInfo.reqGlEsVersion >= 0x20000);
     }
 
-    void coordChange () {
-        values = pc.valuesAccel;
-        ball.coordChange(values[0], values[1], glSurfaceView.getWidth(), glSurfaceView.getHeight());
-        glSurfaceView.invalidate();
-    }
-
     void showInfo() {
         sb.setLength(0);
         sb.append("Accelerometer: " + format(pc.valuesAccel));
-        //.append("\n\nAccel motion: " + format(valuesAccelMotion))
-        //.append("\nAccel gravity : " + format(valuesAccelGravity))
-        //.append("\n\nLin accel : " + format(valuesLinAccel))
-        //.append("\nGravity : " + format(valuesGravity));
         tvText.setText(sb);
     }
 

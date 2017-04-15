@@ -21,4 +21,12 @@
         android:textSize="18sp">
     </TextView>
 
+    <view
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        class="com.example.veronika.ball.Drawer"
+        android:id="@+id/view"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 </RelativeLayout>

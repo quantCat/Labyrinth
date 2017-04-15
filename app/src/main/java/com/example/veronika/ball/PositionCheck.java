@@ -8,6 +8,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.util.Log;
 
 import static android.content.Context.SENSOR_SERVICE;
 
@@ -25,7 +26,8 @@ public class PositionCheck {
         @Override
         public void onSensorChanged(SensorEvent event) {
             valuesAccel[0] = -event.values[0]; // X is reversed
-            valuesAccel[1] = -event.values[1];
+            valuesAccel[1] = event.values[1];
+            //Log.i("PositionCheck", String.format("valuesAccel: %.3f %.3f", valuesAccel[0], valuesAccel[1]));
         }
 
     };

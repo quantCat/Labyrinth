@@ -1,6 +1,9 @@
 package com.example.veronika.ball;
 
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.util.Log;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -17,8 +20,8 @@ class Ball {
     private float vx;
     private float vy;
     private float Radius;
-    static float ball_x;
-    static float ball_y;
+    //static float ball_x;
+    //static float ball_y;
 
     public float getX() {
         return x;
@@ -36,8 +39,8 @@ class Ball {
         vy *= 0.9;
         x+=vx;
         y+=vy;
-        x = max(x, Radius);
-        y = max(y, Radius);
+       //x = max(x, Radius);
+       // y = max(y, Radius);
         x = min(x, width - Radius);
         y = min(y, height - Radius);
         if (x <= 0 + Radius) {
@@ -56,8 +59,17 @@ class Ball {
             y = height - Radius;
         }
         //Log.i("trace", String.format("coordChange: x=%.3f y=%.3f width=%d height=%d", x, y, width, height));
-        ball_x = (2*x - width)/width;
-        ball_y = (2*y - height)/height;
+        //ball_x = (2*x - width)/width;
+        //ball_y = (2*y - height)/height;
+    }
+
+
+
+
+    public void draw(Canvas canvas) {
+        Paint ballPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        ballPaint.setColor(0xff808000);
+        canvas.drawCircle(x, y, 50, ballPaint);
     }
 
 }
