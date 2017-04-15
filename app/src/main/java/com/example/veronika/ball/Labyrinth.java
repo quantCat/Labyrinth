@@ -121,6 +121,7 @@ public class Labyrinth {
         //        x_view_min, x_view_max, y_view_min, y_view_max,
         //        walls.size(), vis_walls.size()));
         Paint wallPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        wallPaint.setStrokeWidth(min_dim * 0.02f);
         wallPaint.setColor(0xffff0000);
         for (int i = 0; i < vis_walls.size(); ++i) {
             Wall wall = vis_walls.get(i);
