@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.pm.ConfigurationInfo;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
-import android.opengl.GLSurfaceView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -36,13 +35,13 @@ public class MainActivity extends AppCompatActivity {
 
         tvText = (TextView) findViewById(R.id.tvText);
         SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        Sensor sensorAccel = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
         pc = new PositionCheck(this);
         loadLabyrinth();
         drawer = (Drawer) findViewById(R.id.view);
         drawer.ball.labyrinth = labyrinth;
         drawer.labyrinth = labyrinth;
+        drawer.ball.initPosition();
     }
 
     private void loadLabyrinth() {
@@ -79,12 +78,6 @@ public class MainActivity extends AppCompatActivity {
         timer.cancel();
     }
 
-    private boolean supportES2() {
-        ActivityManager activityManager =
-                (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
-        return (configurationInfo.reqGlEsVersion >= 0x20000);
-    }
 
     void showInfo() {
         sb.setLength(0);

@@ -108,6 +108,8 @@ public class Labyrinth {
     }
 
     public void draw(Canvas canvas, Ball ball, int width, int height) {
+
+        //PREPARE TO DRAW
         final float min_dim = Math.min(width, height);
         final float x_viewPoint = (float) width * 100.0f / min_dim;
         final float y_viewPoint = (float) height * 100.0f / min_dim;
@@ -115,21 +117,33 @@ public class Labyrinth {
         final int x_view_max = (int) Math.ceil(ball.getX() + x_viewPoint * 0.5f);
         final int y_view_min = (int) Math.floor(ball.getY() - y_viewPoint * 0.5f);
         final int y_view_max = (int) Math.ceil(ball.getY() + y_viewPoint * 0.5f);
+
+        //WALLS
         ArrayList <Wall> vis_walls = visibleWalls(x_view_min, y_view_min, x_view_max, y_view_max);
-        //Log.i("Labyrinth.draw", String.format("screen=%d:%d ball=%.3f:%.3f viewport: %d-%d %d-%d %d walls, %d visible walls",
-        //        width, height, ball.getX(), ball.getY(),
-        //        x_view_min, x_view_max, y_view_min, y_view_max,
-        //        walls.size(), vis_walls.size()));
         Paint wallPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         wallPaint.setStrokeWidth(min_dim * 0.02f);
-        wallPaint.setColor(0xffff0000);
+        wallPaint.setColor(0xffbf1faf);
         for (int i = 0; i < vis_walls.size(); ++i) {
             Wall wall = vis_walls.get(i);
-            float x0 = (wall.begin.x - x_view_min) * (float) width / x_viewPoint;
-            float x1 = (wall.end.x - x_view_min) * (float) width / x_viewPoint;
+            float x0 = (wall.begin.x - x_view_min) * (float) width  / x_viewPoint;
             float y0 = (wall.begin.y - y_view_min) * (float) height / y_viewPoint;
-            float y1 = (wall.end.y - y_view_min) * (float) height / y_viewPoint;
+            float x1 = (wall.end.x   - x_view_min) * (float) width  / x_viewPoint;
+            float y1 = (wall.end.y   - y_view_min) * (float) height / y_viewPoint;
             canvas.drawLine(x0, y0, x1, y1, wallPaint);
         }
+
+        //START AND FINISH POINTS
+        Paint positionsPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        positionsPaint.setColor(0xffaa0011);
+        final float ball_radius = min_dim / 10.0f;
+        float x_start  = (start.x - x_view_min)  * (float) width  / x_viewPoint;
+        float y_start  = (start.y - y_view_min)  * (float) height / y_viewPoint;
+        float x_finish = (finish.x - x_view_min) * (float) width  / x_viewPoint;
+        float y_finish = (finish.y - y_view_min) * (float) height / y_viewPoint;
+        Log.i("Labyrinth.draw", String.format("start=%.2f:%.2f finish=%.2f:%.2f", x_start, y_start, x_finish, y_finish));
+        canvas.drawCircle(x_start, y_start, ball_radius, positionsPaint);
+        canvas.drawCircle(x_finish, y_finish, ball_radius, positionsPaint);
+
+
     }
 }

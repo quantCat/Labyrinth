@@ -33,7 +33,7 @@ public class Drawer extends View {
         int width = getWidth();
         int height = getHeight();
         super.onDraw(canvas);
-        ball.draw(canvas, width, height);
         labyrinth.draw(canvas, ball, width, height);
+        ball.draw(canvas, width, height);
     }
 }

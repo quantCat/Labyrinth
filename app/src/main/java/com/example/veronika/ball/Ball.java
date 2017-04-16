@@ -5,9 +5,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.Log;
 
-import static java.lang.Math.max;
-import static java.lang.Math.min;
-
 /**
  * Created by veronika on 25/02/2017.
  */
@@ -22,6 +19,13 @@ class Ball {
     Labyrinth labyrinth = null;
     final float Radius = 10.0f;
     final float MAX_SPEED = 20.0f;
+
+    public void initPosition() {
+        x = labyrinth.start.x;
+        y = labyrinth.start.y;
+        vx = 0;
+        vy = 0;
+    }
 
     public float getX() {
         return x;
@@ -51,9 +55,6 @@ class Ball {
         //Log.i("trace", String.format("Ball.coordChange: x=%.3f y=%.3f vx=%.3f vy=%.3f", x, y, vx, vy));
         //Log.i("trace", String.format("Ball.coordChange: x=%.3f y=%.3f width=%d height=%d", x, y, width, height));
     }
-
-
-
 
     public void draw(Canvas canvas, int width, int height) {
         final int min_dim = Math.min(width, height);
