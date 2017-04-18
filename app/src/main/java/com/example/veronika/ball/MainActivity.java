@@ -1,9 +1,5 @@
 package com.example.veronika.ball;
 
-import android.app.ActivityManager;
-import android.content.Context;
-import android.content.pm.ConfigurationInfo;
-import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -64,6 +60,9 @@ public class MainActivity extends AppCompatActivity {
                         showInfo();
                         drawer = (Drawer)findViewById(R.id.view);
                         drawer.coordChange();
+                        labyrinth.checkWallTouchAndReact(drawer);
+                        if (drawer.isGameFinished()) {
+                        }
                     }
                 });
             }

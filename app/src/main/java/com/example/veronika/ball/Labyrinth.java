@@ -91,18 +91,6 @@ public class Labyrinth {
         }
     }
 
-    ArrayList <Wall> visibleWalls(int x0, int y0, int x1, int y1) {
-        ArrayList<Wall> visible = new ArrayList<>();
-        for (int i = 0; i < walls.size(); i++) {
-            Wall current_wall = walls.get(i);
-            if (cross(current_wall.begin.x, current_wall.end.x, x0, x1) &&
-                    cross(current_wall.begin.y, current_wall.end.y, y0, y1)) {
-                visible.add(current_wall);
-            }
-        }
-        return visible;
-    }
-
     boolean cross (int fb, int fe, int sb, int se) {
         return ( ( Math.min(fb, fe) < Math.max(sb, se) ) != ( Math.max(fb, fe) < Math.min(sb, se) ) );
     }
@@ -117,9 +105,9 @@ public class Labyrinth {
         final int x_view_max = (int) Math.ceil(ball.getX() + x_viewPoint * 0.5f);
         final int y_view_min = (int) Math.floor(ball.getY() - y_viewPoint * 0.5f);
         final int y_view_max = (int) Math.ceil(ball.getY() + y_viewPoint * 0.5f);
+        ArrayList <Wall> vis_walls = getVisibleWalls(x_view_min, y_view_min, x_view_max, y_view_max);
 
         //WALLS
-        ArrayList <Wall> vis_walls = visibleWalls(x_view_min, y_view_min, x_view_max, y_view_max);
         Paint wallPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         wallPaint.setStrokeWidth(min_dim * 0.02f);
         wallPaint.setColor(0xffbf1faf);
@@ -143,7 +131,59 @@ public class Labyrinth {
         Log.i("Labyrinth.draw", String.format("start=%.2f:%.2f finish=%.2f:%.2f", x_start, y_start, x_finish, y_finish));
         canvas.drawCircle(x_start, y_start, ball_radius, positionsPaint);
         canvas.drawCircle(x_finish, y_finish, ball_radius, positionsPaint);
+    }
 
+    Wall wallTouched (ArrayList<Wall> vis_walls, float ball_x, float ball_y) {
+        for (int i = 0; i < vis_walls.size(); i++) {
+            if (wallIsTouched(vis_walls.get(i), ball_x, ball_y)) {
+                return vis_walls.get(i);
+            }
+        }
+        return null;
+    }
 
+    boolean wallIsTouched(Wall wall, float ball_x, float ball_y) {
+            float a = wall.end.y - wall.begin.y;
+            float b = wall.begin.x - wall.end.x;
+            float c = wall.end.y * (wall.end.x - wall.begin.x) -
+                      wall.begin.x * (wall.end.y - wall.begin.y);
+            float l = (float) (Math.abs(a*ball_x + b*ball_y + c) / Math.hypot(a, b));
+        return (l < 10.0f);
+    }
+
+    void checkWallTouchAndReact(Drawer drawer) {
+        Ball ball = drawer.ball;
+        Labyrinth.Wall touched_wall = wallTouched(
+                getWallsVisibleAtScreen(
+                        ball.getX(), ball.getY(),
+                        drawer.getWidth(), drawer.getHeight()),
+                ball.getX(), ball.getY());
+        if (touched_wall != null) {
+            ball.collision(touched_wall);
+        }
+    }
+
+    ArrayList<Wall> getWallsVisibleAtScreen(float x, float y, int width, int height) {
+        final float min_dim = Math.min(width, height);
+        final float x_viewPoint = (float) width * 100.0f / min_dim;
+        final float y_viewPoint = (float) height * 100.0f / min_dim;
+        final int x_view_min = (int) Math.floor(x - x_viewPoint * 0.5f);
+        final int x_view_max = (int) Math.ceil(x + x_viewPoint * 0.5f);
+        final int y_view_min = (int) Math.floor(y - y_viewPoint * 0.5f);
+        final int y_view_max = (int) Math.ceil(y + y_viewPoint * 0.5f);
+        ArrayList <Wall> vis_walls = getVisibleWalls(x_view_min, y_view_min, x_view_max, y_view_max);
+        return vis_walls;
+    }
+
+    ArrayList <Wall> getVisibleWalls(int x0, int y0, int x1, int y1) {
+        ArrayList<Wall> visible = new ArrayList<>();
+        for (int i = 0; i < walls.size(); i++) {
+            Wall current_wall = walls.get(i);
+            if (cross(current_wall.begin.x, current_wall.end.x, x0, x1) &&
+                    cross(current_wall.begin.y, current_wall.end.y, y0, y1)) {
+                visible.add(current_wall);
+            }
+        }
+        return visible;
     }
 }

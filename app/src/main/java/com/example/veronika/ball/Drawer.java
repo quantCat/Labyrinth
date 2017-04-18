@@ -36,4 +36,10 @@ public class Drawer extends View {
         labyrinth.draw(canvas, ball, width, height);
         ball.draw(canvas, width, height);
     }
+
+    public boolean isGameFinished() {
+        float l = (float) Math.hypot(labyrinth.finish.x - ball.getX(),
+                                     labyrinth.finish.y - ball.getY());
+        return (l < ball.Radius);
+    }
 }
