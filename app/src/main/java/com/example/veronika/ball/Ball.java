@@ -87,9 +87,7 @@ class Ball {
         }
 
         float spd_along_wall = vx * wall_vec_x + vy * wall_vec_y;
-        float l2 = vx * ort_vec_x + vy * ort_vec_y;
         wall_vec_x *= spd_along_wall; wall_vec_y *= spd_along_wall;
-        ort_vec_x *= l2; ort_vec_y *= l2;
         vx = wall_vec_x;
         vy = wall_vec_y;
 

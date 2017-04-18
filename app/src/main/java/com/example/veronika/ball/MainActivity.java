@@ -1,5 +1,6 @@
 package com.example.veronika.ball;
 
+import android.content.Intent;
 import android.hardware.SensorManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,7 +18,6 @@ public class MainActivity extends AppCompatActivity {
     public static PositionCheck pc;
     Timer timer;
     StringBuilder sb = new StringBuilder();
-    float[] values;
     Labyrinth labyrinth;
     Drawer drawer;
 
@@ -30,7 +30,6 @@ public class MainActivity extends AppCompatActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         tvText = (TextView) findViewById(R.id.tvText);
-        SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
         pc = new PositionCheck(this);
         loadLabyrinth();
@@ -62,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
                         drawer.coordChange();
                         labyrinth.checkWallTouchAndReact(drawer);
                         if (drawer.isGameFinished()) {
+                            onPause();
                         }
                     }
                 });
@@ -75,8 +75,9 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
         pc.onPause();
         timer.cancel();
+        stopService(new Intent(MainActivity.this, MusicService.class));
+        Toast.makeText(this, "You win!", Toast.LENGTH_LONG);
     }
-
 
     void showInfo() {
         sb.setLength(0);
