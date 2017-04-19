@@ -19,6 +19,7 @@ class Ball {
     Labyrinth labyrinth = null;
     final float Radius = 10.0f;
     final float MAX_SPEED = 20.0f;
+    CollisionsCalculator collisionsCalc = new CollisionsCalculator();
 
     public void initPosition() {
         x = labyrinth.start.x;
@@ -70,8 +71,8 @@ class Ball {
 
     public void collision (Labyrinth.Wall wall) {
         //vector 1, l=1, parallel to the wall
-        //Log.i("Ball.collision", String.format("at begin: x=%.2f y=%.2f vx=%.2f vy=%.2f wall: %d:%d - %d:%d",
-        //            x, y, vx, vy, wall.begin.x, wall.begin.y, wall.end.x, wall.end.y));
+        Log.i("Ball.collision", String.format("at the beginning: x=%.2f y=%.2f vx=%.2f vy=%.2f wall: %d:%d - %d:%d",
+                    x, y, vx, vy, wall.begin.x, wall.begin.y, wall.end.x, wall.end.y));
         float wall_vec_x = wall.end.x - wall.begin.x;
         float wall_vec_y = wall.end.y - wall.begin.y;
         final float wall_len_tmp = (float) Math.hypot(wall_vec_x, wall_vec_y);
@@ -92,24 +93,12 @@ class Ball {
         vy = wall_vec_y;
 
         //Now - ball position correction
-        float[] wallDetails = wallTouchDetails(wall);
+        float[] wallDetails = collisionsCalc.wallTouchDetails(wall, x, y);
         float distance = wallDetails[0];
         float touchX = wallDetails[1], touchY = wallDetails[2];
         x = touchX - ort_vec_x * Radius;
         y = touchY - ort_vec_y * Radius;
-        //Log.i("Ball.collision", String.format("at begin: x=%.2f y=%.2f vx=%.2f vy=%.2f",
-        //            x, y, vx, vy));
-    }
-
-    float[] wallTouchDetails (Labyrinth.Wall wall) {
-        float a = wall.end.y - wall.begin.y;
-        float b = wall.begin.x - wall.end.x;
-        float c = wall.end.y * (wall.end.x - wall.begin.x) -
-                wall.begin.x * (wall.end.y - wall.begin.y);
-        float distance = (float) (Math.abs(a*x + b*y + c) / Math.hypot(a, b));
-        float touchX = (b* (b*x - a*y) - a*c)/(a*a+b*b);
-        float touchY = (a*(-b*x + a*y) - b*c)/(a*a+b*b);
-        float[] returnValue = {distance, touchX, touchY};
-        return returnValue;
+        Log.i("Ball.collision", String.format("at the end: x=%.2f y=%.2f vx=%.2f vy=%.2f",
+                    x, y, vx, vy));
     }
 }

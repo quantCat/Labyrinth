@@ -13,5 +13,5 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Made by: Veronika Nechaieva. Vladislav Shymanovytch and Pavlo Glyhovskyj also should be here... I hope" />
+        android:text="Made by: Veronika Nechaieva, Vladislav Shymanovytch and Pavlo Glyhovskyj \nMusic created by Toby Fox. Shared on Attribution-NonCommercial-ShareAlike 3.0 Unported (Most likely we'll change the music later) "/>
 </RelativeLayout>
