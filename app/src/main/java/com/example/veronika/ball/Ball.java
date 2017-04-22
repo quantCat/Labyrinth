@@ -14,6 +14,8 @@ class Ball {
     protected static int color = Color.BLACK;
     private float x;
     private float y;
+    private float prevX;
+    private float prevY;
     private float vx; // speed by X
     private float vy; // speed by Y
     Labyrinth labyrinth = null;
@@ -24,6 +26,8 @@ class Ball {
     public void initPosition() {
         x = labyrinth.start.x;
         y = labyrinth.start.y;
+        prevX = labyrinth.start.x;
+        prevY = labyrinth.start.y;
         vx = 0;
         vy = 0;
     }
@@ -31,16 +35,17 @@ class Ball {
     public float getX() {
         return x;
     }
-
     public float getY() {
         return y;
     }
-
+    public float getOldX() { return prevX; }
+    public float getOldY() { return prevY; }
     public float getVx() { return vx; }
-
     public float getVy() { return vy; }
 
     public void coordChange (float dX, float dY) {
+        prevX = x;
+        prevY = y;
         vx += dX * 0.05;
         vy += dY * 0.05;
         vx *= 0.9; //friction
@@ -69,9 +74,9 @@ class Ball {
         canvas.drawCircle(width/2, height/2, ball_radius, ballPaint);
     }
 
-    public void collision (Labyrinth.Wall wall) {
+    public void collisionWithWall (Labyrinth.Wall wall) {
         //vector 1, l=1, parallel to the wall
-//        Log.i("Ball.collision", String.format("at the beginning: x=%.2f y=%.2f vx=%.2f vy=%.2f wall: %d:%d - %d:%d",
+//        Log.i("Ball.collisionWithWall", String.format("at the beginning: x=%.2f y=%.2f vx=%.2f vy=%.2f wall: %d:%d - %d:%d",
  //                   x, y, vx, vy, wall.begin.x, wall.begin.y, wall.end.x, wall.end.y));
         float wall_vec_x = wall.end.x - wall.begin.x;
         float wall_vec_y = wall.end.y - wall.begin.y;
@@ -95,7 +100,7 @@ class Ball {
         float touchX = wallDetails[1], touchY = wallDetails[2];
         x = touchX - ort_vec_x * Radius;
         y = touchY - ort_vec_y * Radius;
- //       Log.i("Ball.collision", String.format("at the end: x=%.2f y=%.2f vx=%.2f vy=%.2f",
+ //       Log.i("Ball.collisionWithWall", String.format("at the end: x=%.2f y=%.2f vx=%.2f vy=%.2f",
  //                   x, y, vx, vy));
     }
 

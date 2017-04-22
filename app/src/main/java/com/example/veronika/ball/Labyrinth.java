@@ -150,7 +150,7 @@ public class Labyrinth {
         }
     }
 
-    Wall wallTouched (ArrayList<Wall> vis_walls, float ball_x, float ball_y) {
+   /* Wall wallTouched (ArrayList<Wall> vis_walls, float ball_x, float ball_y) {
         for (int i = 0; i < vis_walls.size(); i++) {
             if (wallIsTouched(vis_walls.get(i), ball_x, ball_y)) {
                 Log.i("collision", "Wall touched");
@@ -158,7 +158,7 @@ public class Labyrinth {
             }
         }
         return null;
-    }
+    }*/
 
     boolean wallIsTouched(Wall wall, float ball_x, float ball_y) {
         float[] wallDetails = collisionsCalc.wallTouchDetails(wall, ball_x, ball_y);
@@ -170,16 +170,16 @@ public class Labyrinth {
                                    && (touchY <= maxy)  && (touchY >= miny));
     }
 
-    Point holeTouched (ArrayList<Point> vis_holes, float ball_x, float ball_y) {
+   /* Point holeTouched (ArrayList<Point> vis_holes, float ball_x, float ball_y) {
         for (int i = 0; i < vis_holes.size(); i++) {
             if (pointIsTouched(vis_holes.get(i), ball_x, ball_y)) {
                 return vis_holes.get(i);
             }
         }
         return null;
-    }
+    }*/
 
-    Point pointTouched (ArrayList<Wall> vis_walls, float ball_x, float ball_y) {
+   /* Point pointTouched (ArrayList<Wall> vis_walls, float ball_x, float ball_y) {
         for (int i = 0; i < vis_walls.size(); i++) {
             if (pointIsTouched(vis_walls.get(i).begin, ball_x, ball_y)) {
                 return vis_walls.get(i).begin;
@@ -189,7 +189,7 @@ public class Labyrinth {
             }
         }
         return null;
-    }
+    }*/
 
     boolean pointIsTouched (Point point, float ball_x, float ball_y) {
         return (Math.hypot(point.x - ball_x, point.y - ball_y) < 10.0f);
@@ -197,19 +197,18 @@ public class Labyrinth {
 
     void checkWallTouchAndReact(Drawer drawer) {
         Ball ball = drawer.ball;
-        Wall touched_wall = wallTouched(
-                getWallsVisibleAtScreen(ball.getX(), ball.getY(),
-                                        drawer.getWidth(), drawer.getHeight()),
-                                        ball.getX(), ball.getY() );
-        Point touched_point = pointTouched(
-                getWallsVisibleAtScreen(ball.getX(), ball.getY(),
-                        drawer.getWidth(), drawer.getHeight()),
-                ball.getX(), ball.getY() );
-        if (touched_wall != null) {
-            ball.collision(touched_wall);
-        }
-        else if (touched_point != null) {
-            ball.collisionWithPoint(touched_point);
+        ArrayList<Wall> vis_walls = getWallsVisibleAtScreen(ball.getX(), ball.getY(),
+                                        drawer.getWidth(), drawer.getHeight());
+        for (int i = 0; i < vis_walls.size(); i++) {
+            if (pointIsTouched(walls.get(i).begin, ball.getX(), ball.getY())) {
+                ball.collisionWithPoint(vis_walls.get(i).begin);
+            }
+            if (pointIsTouched(walls.get(i).end, ball.getX(), ball.getY())) {
+                ball.collisionWithPoint(vis_walls.get(i).end);
+            }
+            if (wallIsTouched(walls.get(i), ball.getX(), ball.getY())) {
+                ball.collisionWithWall(vis_walls.get(i));
+            }
         }
     }
 
