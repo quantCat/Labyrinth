@@ -34,6 +34,7 @@ public class Labyrinth {
         }
     };
     ArrayList <Wall> walls;
+    ArrayList <Point> holes;
     Point start, finish;
     Point size;
     CollisionsCalculator collisionsCalc = new CollisionsCalculator();
@@ -49,11 +50,12 @@ public class Labyrinth {
         final int y_view_min = (int) Math.floor(ball.getY() - y_viewPoint * 0.5f);
         final int y_view_max = (int) Math.ceil(ball.getY() + y_viewPoint * 0.5f);
         ArrayList <Wall> vis_walls = getVisibleWalls(x_view_min, y_view_min, x_view_max, y_view_max);
+        ArrayList<Point> vis_holes = getVisibleHoles(x_view_min, y_view_min, x_view_max, y_view_max);
 
         //WALLS
         Paint wallPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        wallPaint.setStrokeWidth(min_dim * 0.02f);
         wallPaint.setColor(0xffbf1faf);
+        wallPaint.setStrokeWidth(min_dim * 0.02f);
         for (int i = 0; i < vis_walls.size(); ++i) {
             Wall wall = vis_walls.get(i);
             float x0 = (wall.begin.x - x_view_min) * (float) width  / x_viewPoint;
@@ -66,18 +68,30 @@ public class Labyrinth {
         //START AND FINISH POINTS
         Paint positionsPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         positionsPaint.setColor(0xffaa0011);
-        final float ball_radius = min_dim / (2*10.0f);
+        final float point_radius = min_dim / (2*10.0f);
         float x_start  = (start.x - x_view_min)  * (float) width  / x_viewPoint;
         float y_start  = (start.y - y_view_min)  * (float) height / y_viewPoint;
         float x_finish = (finish.x - x_view_min) * (float) width  / x_viewPoint;
         float y_finish = (finish.y - y_view_min) * (float) height / y_viewPoint;
         Log.i("Labyrinth.draw", String.format("start=%.2f:%.2f finish=%.2f:%.2f", x_start, y_start, x_finish, y_finish));
-        canvas.drawCircle(x_start, y_start, ball_radius, positionsPaint);
-        canvas.drawCircle(x_finish, y_finish, ball_radius, positionsPaint);
+        canvas.drawCircle(x_start, y_start, point_radius, positionsPaint);
+        canvas.drawCircle(x_finish, y_finish, point_radius, positionsPaint);
+
+        //HOLES
+        Paint holesPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        positionsPaint.setColor(0xff110055);
+        final float hole_radius = min_dim /10.0f;
+        for (int i = 0; i < vis_holes.size(); ++i) {
+            Point hole = vis_holes.get(i);
+            float hx = (hole.x - x_view_min)  * (float) width  / x_viewPoint;
+            float hy = (hole.y - y_view_min)  * (float) height  / y_viewPoint;
+            canvas.drawCircle(hx, hy, hole_radius, holesPaint);
+        }
     }
 
-    void readWalls(Context context) {
+    void readLabyrinth(Context context) {
         walls = new ArrayList<>();
+        holes = new ArrayList<>();
         try {
             BufferedReader bufferedReader = null;
             try {
@@ -117,6 +131,12 @@ public class Labyrinth {
                         size = new Point(x0, y0);
                     }
 
+                    if (kind.equals("hole")) {
+                        int x0 = lrs.nextInt();
+                        int y0 = lrs.nextInt();
+                        holes.add(new Point(x0, y0));
+                    }
+
                 }
             } finally {
                 if (bufferedReader != null) {
@@ -128,10 +148,6 @@ public class Labyrinth {
         } catch (Resources.NotFoundException nfex) {
             nfex.printStackTrace();
         }
-    }
-
-    boolean cross (float fb, float fe, float sb, float se) {
-        return ( ( Math.min(fb, fe) < Math.max(sb, se) ) != ( Math.max(fb, fe) < Math.min(sb, se) ) );
     }
 
     Wall wallTouched (ArrayList<Wall> vis_walls, float ball_x, float ball_y) {
@@ -152,6 +168,15 @@ public class Labyrinth {
         float miny = Math.min(wall.begin.y, wall.end.y), maxy = Math.max(wall.begin.y, wall.end.y);
         return ((distance < 10.0f) && (touchX <= maxx)  && (touchX >= minx)
                                    && (touchY <= maxy)  && (touchY >= miny));
+    }
+
+    Point holeTouched (ArrayList<Point> vis_holes, float ball_x, float ball_y) {
+        for (int i = 0; i < vis_holes.size(); i++) {
+            if (pointIsTouched(vis_holes.get(i), ball_x, ball_y)) {
+                return vis_holes.get(i);
+            }
+        }
+        return null;
     }
 
     Point pointTouched (ArrayList<Wall> vis_walls, float ball_x, float ball_y) {
@@ -210,5 +235,23 @@ public class Labyrinth {
             }
         }
         return visible;
+    }
+
+    ArrayList <Point> getVisibleHoles(float x0, float y0, float x1, float y1) {
+        ArrayList<Point> visible = new ArrayList<>();
+        for (int i = 0; i < holes.size(); i++) {
+            Point current_hole = holes.get(i);
+            if (current_hole.x > x0 &&
+                current_hole.x < x1 &&
+                current_hole.y > y0 &&
+                current_hole.y < y1 ) {
+                visible.add(current_hole);
+            }
+        }
+        return visible;
+    }
+
+    boolean cross (float fb, float fe, float sb, float se) {
+        return ( ( Math.min(fb, fe) < Math.max(sb, se) ) != ( Math.max(fb, fe) < Math.min(sb, se) ) );
     }
 }
