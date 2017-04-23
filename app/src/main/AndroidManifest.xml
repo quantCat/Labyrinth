@@ -20,7 +20,9 @@
         <activity android:name=".CreditsActivity"></activity>
         <activity android:name=".SettingsActivity"></activity>
 
+        <service android:name=".MusicServiceMenu" android:enabled="true"/>
         <service android:name=".MusicService" android:enabled="true"/>
+        <service android:name=".MusicServiceSet" android:enabled="true"/>
     </application>
 
 </manifest>

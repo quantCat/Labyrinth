@@ -31,4 +31,14 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
     }
+    @Override
+    protected void onResume () {
+        super.onResume();
+        startService(new Intent(this, MusicServiceSet.class));
+    }
+    protected void onPause() {
+        super.onPause();
+        stopService(new Intent(SettingsActivity.this, MusicServiceSet.class));
+    }
+
 }

@@ -6,6 +6,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
+
+import static com.example.veronika.ball.MainActivity.pc;
 
 /**
  * Created by user on 06.04.2017.
@@ -16,7 +19,13 @@ public class StartActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.start_activity);
+
+
+
         final Intent game_intent = new Intent(this, MainActivity.class);
+
+        startService(new Intent(this, MusicServiceMenu.class));
+
         final Button bNewGame = (Button) findViewById(R.id.button_new_game);
         bNewGame.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -28,7 +37,9 @@ public class StartActivity extends AppCompatActivity {
         final Button bcontinueGame = (Button) findViewById(R.id.button_continue_game);
         bcontinueGame.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+
                 startActivity(game_intent);
+                startService(new Intent(StartActivity.this, MusicService.class));
             }
         });
 
@@ -37,6 +48,7 @@ public class StartActivity extends AppCompatActivity {
         bsettings.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 startActivity(settings_intent);
+                startService(new Intent(StartActivity.this, MusicServiceSet.class));
             }
         });
 
@@ -62,6 +74,19 @@ public class StartActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+
+
+}
+
+    @Override
+    protected void onResume () {
+        super.onResume();
+        startService(new Intent(this, MusicServiceMenu.class));
+    }
+    protected void onPause() {
+        super.onPause();
+        stopService(new Intent(StartActivity.this, MusicServiceMenu.class));
     }
 
 }
