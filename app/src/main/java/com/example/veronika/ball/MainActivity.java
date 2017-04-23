@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadLabyrinth() {
         labyrinth = new Labyrinth();
-        labyrinth.readWalls(this);
+        labyrinth.readLabyrinth(this);
     }
 
     @Override
