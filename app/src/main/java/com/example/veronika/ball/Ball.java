@@ -78,22 +78,20 @@ class Ball {
         //vector 1, l=1, parallel to the wall
 //        Log.i("Ball.collisionWithWall", String.format("at the beginning: x=%.2f y=%.2f vx=%.2f vy=%.2f wall: %d:%d - %d:%d",
  //                   x, y, vx, vy, wall.begin.x, wall.begin.y, wall.end.x, wall.end.y));
-        float wall_vec_x = wall.end.x - wall.begin.x;
-        float wall_vec_y = wall.end.y - wall.begin.y;
-        float[] wall_vec = collisionsCalc.normalizeVector(wall_vec_x, wall_vec_y);
-        wall_vec_x = wall_vec[0]; wall_vec_y = wall_vec[1];
+        float wall_vec_x = wall.par_vec.x;
+        float wall_vec_y = wall.par_vec.y;
 
         //vector 2, l=1, perpendicular to the wall
-        float ort_vec_x = wall_vec_y;
-        float ort_vec_y = -wall_vec_x;
+        float ort_vec_x = wall.ort_vec.x;
+        float ort_vec_y = wall.ort_vec.y;
         if (ort_vec_x*vx + ort_vec_y*vy < 0) {
-            ort_vec_x = -wall_vec_y;
-            ort_vec_y = wall_vec_x;
+            ort_vec_x = -ort_vec_x;
+            ort_vec_y = -ort_vec_y;
         }
 
-        float spd_along_wall = vx * wall_vec_x + vy * wall_vec_y;
-        vx = wall_vec_x * spd_along_wall;
-        vy = wall_vec_y * spd_along_wall;
+        float speed_along_wall = vx * wall_vec_x + vy * wall_vec_y;
+        vx = wall_vec_x * speed_along_wall;
+        vy = wall_vec_y * speed_along_wall;
 
         //Now - ball position correction
         float[] wallDetails = collisionsCalc.wallTouchDetails(wall, x, y);

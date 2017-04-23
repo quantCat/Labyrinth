@@ -26,11 +26,30 @@ public class Labyrinth {
             y = ny;
         }
     }
+    static class Vector {
+        float x, y;
+        Vector(float nx, float ny) {
+            x = nx;
+            y = ny;
+        }
+        void normalize() {
+            float len = (float) Math.hypot(x, y);
+            x /= len;
+            y /= len;
+        }
+        Vector makeOrt() {
+            return new Vector(-y, x);
+        }
+    }
     static class Wall {
         Point begin, end;
+        Vector par_vec, ort_vec;
         Wall(float nx0, float ny0, float nx1, float ny1) {
             begin = new Point(nx0, ny0);
             end = new Point(nx1, ny1);
+            par_vec = new Vector(nx1 - nx0, ny1 - ny0);
+            par_vec.normalize();
+            ort_vec = par_vec.makeOrt();
         }
     };
     ArrayList <Wall> walls;
