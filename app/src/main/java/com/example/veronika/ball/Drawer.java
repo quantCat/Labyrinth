@@ -34,7 +34,7 @@ public class Drawer extends View {
         //paint.setARGB(1, 230, 230, 250);
         bg = BitmapFactory.decodeResource(context.getResources(), R.drawable.bg);
         static_bg_original = BitmapFactory.decodeResource(context.getResources(), R.drawable.planks);
-        static_bg = Bitmap.createScaledBitmap(static_bg_original, static_bg_original.getWidth() / 2, static_bg_original.getHeight() / 2, false);
+        static_bg = Bitmap.createScaledBitmap(static_bg_original, static_bg_original.getWidth()/2, static_bg_original.getHeight()/2, false);
         rectSrc = new Rect(0, 0, static_bg.getWidth(), static_bg.getHeight());
         rectDest = new Rect(0, 0, static_bg.getWidth(), static_bg.getHeight());
         ball = new Ball();
@@ -54,8 +54,9 @@ public class Drawer extends View {
         super.onDraw(canvas);
 
         //canvas.drawColor(Color.rgb(230,230,250));
-        for(int x = (int)((200 - ball.getX() * 2 % 200) - 200); x < width; x += 200)
-            for(int y = (int)((200 - ball.getY() * 2 % 200) - 200); y < height; y += 200)
+        final int bgw = bg.getWidth();
+        for(int x = (int)((bgw - ball.getX() * 2 % bgw) - bgw); x < width; x += bgw)
+            for(int y = (int)((bgw - ball.getY() * 2 % bgw) - bgw); y < height; y += bgw)
                 canvas.drawBitmap(bg, x, y, paint);
 
         final float min_dim = Math.min(width, height);
