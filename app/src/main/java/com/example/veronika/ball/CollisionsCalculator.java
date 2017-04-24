@@ -6,15 +6,16 @@ package com.example.veronika.ball;
 
 public class CollisionsCalculator {
 
-    float[] wallTouchDetails (Labyrinth.Wall wall, float x, float y) {
+    float[] wallTouchDetailsA(Labyrinth.Wall wall, float x, float y) {
         final float a = wall.begin.y - wall.end.y;
         final float b = wall.end.x - wall.begin.x;
         final float c = - wall.begin.y * b - wall.begin.x * a;
         final float h = (float) Math.hypot(a, b);
-        float distance = (float) (Math.abs(a*x + b*y + c) / h);
+        float deviation = (a*x + b*y + c) / h;
+        float distance = Math.abs(deviation);
         float touchX = (b* (b*x - a*y) - a*c)/(h*h);
         float touchY = (a*(-b*x + a*y) - b*c)/(h*h);
-        float[] returnValue = {distance, touchX, touchY};
+        float[] returnValue = {touchX, touchY, distance, deviation};
         return returnValue;
     }
 

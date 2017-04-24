@@ -1,7 +1,6 @@
 package com.example.veronika.ball;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.Log;
 
@@ -11,9 +10,10 @@ import android.util.Log;
 
 class Ball {
 
-    protected static int color = Color.BLACK;
     private float x;
     private float y;
+    private float prevX;
+    private float prevY;
     private float vx; // speed by X
     private float vy; // speed by Y
     Labyrinth labyrinth = null;
@@ -24,6 +24,8 @@ class Ball {
     public void initPosition() {
         x = labyrinth.start.x;
         y = labyrinth.start.y;
+        prevX = labyrinth.start.x;
+        prevY = labyrinth.start.y;
         vx = 0;
         vy = 0;
     }
@@ -31,20 +33,17 @@ class Ball {
     public float getX() {
         return x;
     }
-
     public float getY() {
         return y;
     }
 
-    public float getVx() { return vx; }
-
-    public float getVy() { return vy; }
-
     public void coordChange (float dX, float dY) {
+        prevX = x;
+        prevY = y;
         vx += dX * 0.05;
         vy += dY * 0.05;
-        vx *= 0.9; //friction
-        vy *= 0.9;
+        vx *= 0.95; //friction
+        vy *= 0.95;
         if (vx >  MAX_SPEED) { vx =  MAX_SPEED; }
         if (vx < -MAX_SPEED) { vx = -MAX_SPEED; }
         if (vy >  MAX_SPEED) { vy =  MAX_SPEED; }
@@ -69,66 +68,75 @@ class Ball {
         canvas.drawCircle(width/2, height/2, ball_radius, ballPaint);
     }
 
-    public void collision (Labyrinth.Wall wall) {
+    public void collisionWithWall (Labyrinth.Wall wall) {
         //vector 1, l=1, parallel to the wall
-//        Log.i("Ball.collision", String.format("at the beginning: x=%.2f y=%.2f vx=%.2f vy=%.2f wall: %d:%d - %d:%d",
- //                   x, y, vx, vy, wall.begin.x, wall.begin.y, wall.end.x, wall.end.y));
-        float wall_vec_x = wall.end.x - wall.begin.x;
-        float wall_vec_y = wall.end.y - wall.begin.y;
-        float[] wall_vec = collisionsCalc.normalizeVector(wall_vec_x, wall_vec_y);
-        wall_vec_x = wall_vec[0]; wall_vec_y = wall_vec[1];
+        Log.i("Ball.collisionWithWall",
+                String.format("at the beginning: x=%.2f y=%.2f vx=%.2f vy=%.2f wall: %.2f:%.2f - %.2f:%.2f",
+                x, y, vx, vy, wall.begin.x, wall.begin.y, wall.end.x, wall.end.y));
+        float[] touchDetails = collisionsCalc.wallTouchDetailsA(wall, x, y);
+        float[] prevTouchDetails = collisionsCalc.wallTouchDetailsA(wall, prevX, prevY);
+        if (prevTouchDetails[2] < Radius) {
+            throw new RuntimeException("Ball is already too close");
+        }
+        Log.i("Ball.collisionWithWall", String.format("touchDetails: prev: x=%.2f y=%.2f tx=%.2f ty=%.2f dev=%.2f"
+                + "; curr: x=%.2f y=%.2f tx=%.2f ty=%.2f dev=%.2f",
+                prevX, prevY, prevTouchDetails[0], prevTouchDetails[1], prevTouchDetails[3],
+                x, y, touchDetails[0], touchDetails[1], touchDetails[3]));
+        Labyrinth.Vector ort_against = new Labyrinth.Vector(prevX - prevTouchDetails[0], prevY - prevTouchDetails[1]);
+        ort_against.normalize();
 
-        //vector 2, l=1, perpendicular to the wall
-        float ort_vec_x = wall_vec_y;
-        float ort_vec_y = -wall_vec_x;
-        if (ort_vec_x*vx + ort_vec_y*vy < 0) {
-            ort_vec_x = -wall_vec_y;
-            ort_vec_y = wall_vec_x;
+        x = touchDetails[0] + Radius * ort_against.x * 1.01f;
+        y = touchDetails[1] + Radius * ort_against.y * 1.01f;
+
+        float[] newTouchDetails = collisionsCalc.wallTouchDetailsA(wall, x, y);
+        if (prevTouchDetails[3] * newTouchDetails[3] < 0) {
+            Log.w("Ball.collisionWithWall", String.format("Tunneled! prev: x=%.2f y=%.2f tx=%.2f ty=%.2f dev=%.2f"
+                            + "; new: x=%.2f y=%.2f tx=%.2f ty=%.2f dev=%.2f"
+                            + "; wall=%.2f:%.2f--%.2f:%.2f"
+                            + "; ort_vec=%.2f:%.2f",
+                    prevX, prevY, prevTouchDetails[0], prevTouchDetails[1], prevTouchDetails[3],
+                    x, y, newTouchDetails[0], newTouchDetails[1], newTouchDetails[3],
+                    wall.begin.x, wall.begin.y, wall.end.x, wall.end.y,
+                    ort_against.x, ort_against.y));
+            throw new RuntimeException("Tunneled");
         }
 
-        float spd_along_wall = vx * wall_vec_x + vy * wall_vec_y;
-        vx = wall_vec_x * spd_along_wall;
-        vy = wall_vec_y * spd_along_wall;
+        float wall_vec_x = wall.par_vec.x;
+        float wall_vec_y = wall.par_vec.y;
 
-        //Now - ball position correction
-        float[] wallDetails = collisionsCalc.wallTouchDetails(wall, x, y);
-        float touchX = wallDetails[1], touchY = wallDetails[2];
-        x = touchX - ort_vec_x * Radius;
-        y = touchY - ort_vec_y * Radius;
- //       Log.i("Ball.collision", String.format("at the end: x=%.2f y=%.2f vx=%.2f vy=%.2f",
- //                   x, y, vx, vy));
+        float speed_along_wall = vx * wall_vec_x + vy * wall_vec_y;
+        vx = wall_vec_x * speed_along_wall;
+        vy = wall_vec_y * speed_along_wall;
+
+        Log.i("Ball.collisionWithWall", String.format("at the end: x=%.2f y=%.2f vx=%.2f vy=%.2f",
+                    x, y, vx, vy));
     }
 
-    public void collisionWithPoint (Labyrinth.Point point) {
-        float iw[] = collisionsCalc.normalizeVector(vy, -vx); //perpendicular to the ball moving vector
-        float im_wall_vecX = iw[0];
-        float im_wall_vecY = iw[1];
-
-        float radius_vectorX = point.x - x;
-        float radius_vectorY = point.y - y;
-        float radius_vector[] = collisionsCalc.normalizeVector(radius_vectorX, radius_vectorY);
-        radius_vectorX = radius_vector[0]; radius_vectorY = radius_vector[1];
-
-        float ort_vec_x = radius_vectorY;
-        float ort_vec_y = -radius_vectorX;
-        if (ort_vec_x*vx + ort_vec_y*vy < 0) {
-            ort_vec_x = -radius_vectorY;
-            ort_vec_y = radius_vectorY;
+    public void collisionWithPoint (Labyrinth.Point point, boolean is_end, Labyrinth.Wall wall) {
+        float x0 = prevX, x1 = x, y0 = prevY, y1 = y;
+        // Reduce contact zone to 0.01 wide
+        while ((x0 - x1) * (x0 - x1) + (y0 - y1) * (y0 - y1) > 0.0001) {
+            float midX = (x0 + x1) / 2, midY = (y0 + y1) / 2;
+            float dist = (float) Math.hypot(point.x - midX, point.y - midY);
+            if (dist > Radius) {
+                x0 = midX;
+                y0 = midY;
+            } else {
+                x1 = midX;
+                y1 = midY;
+            }
         }
-
-        float left_spd = vx * ort_vec_x + vy * ort_vec_y;
-        vx = ort_vec_x * left_spd;
-        vy = ort_vec_y * left_spd;
-
-
-        //Position correction
-        Labyrinth.Wall imagineWall = new Labyrinth.Wall(x, y, x + im_wall_vecX, y + im_wall_vecY);
-        float[] wallDetails = collisionsCalc.wallTouchDetails(imagineWall, point.x, point.y);
-        float distance = wallDetails[0];
-
-        float moveX = im_wall_vecX * distance;
-        float moveY = -im_wall_vecY * distance;
-        //x -= moveX;
-        //y -= moveY;
+        x = x0;
+        y = y0;
+        boolean pos_direction = (0 < wall.par_vec.x * vx + wall.par_vec.y * vy);
+        if (pos_direction == is_end) {
+            Labyrinth.Vector speed = new Labyrinth.Vector(vx, vy);
+            speed.reduceToProjection(wall.par_vec);
+            vx = speed.x;
+            vy = speed.y;
+        } else {
+            vx = 0;
+            vy = 0;
+        }
     }
 }

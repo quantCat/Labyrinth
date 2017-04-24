@@ -1,7 +1,6 @@
 package com.example.veronika.ball;
 
 import android.content.Intent;
-import android.hardware.SensorManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;

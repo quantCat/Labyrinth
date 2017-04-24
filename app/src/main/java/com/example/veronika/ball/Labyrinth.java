@@ -28,11 +28,36 @@ public class Labyrinth {
             y = ny;
         }
     }
+    static class Vector {
+        float x, y;
+        Vector(float nx, float ny) {
+            x = nx;
+            y = ny;
+        }
+        void normalize() {
+            float len = (float) Math.hypot(x, y);
+            x /= len;
+            y /= len;
+        }
+        Vector makeOrt() {
+            return new Vector(-y, x);
+        }
+        void reduceToProjection(Vector basis) {
+            // basis shall have length 1
+            float prod = x * basis.x + y * basis.y;
+            x = prod * basis.x;
+            y = prod * basis.y;
+        }
+    }
     static class Wall {
         Point begin, end;
+        Vector par_vec, ort_vec;
         Wall(float nx0, float ny0, float nx1, float ny1) {
             begin = new Point(nx0, ny0);
             end = new Point(nx1, ny1);
+            par_vec = new Vector(nx1 - nx0, ny1 - ny0);
+            par_vec.normalize();
+            ort_vec = par_vec.makeOrt();
         }
     };
     ArrayList <Wall> walls;
@@ -69,14 +94,15 @@ public class Labyrinth {
 
         //START AND FINISH POINTS
         Paint positionsPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        positionsPaint.setColor(0xffaa0011);
         final float point_radius = min_dim / (2*10.0f);
         float x_start  = (start.x - x_view_min)  * (float) width  / x_viewPoint;
         float y_start  = (start.y - y_view_min)  * (float) height / y_viewPoint;
         float x_finish = (finish.x - x_view_min) * (float) width  / x_viewPoint;
         float y_finish = (finish.y - y_view_min) * (float) height / y_viewPoint;
         Log.i("Labyrinth.draw", String.format("start=%.2f:%.2f finish=%.2f:%.2f", x_start, y_start, x_finish, y_finish));
+        positionsPaint.setColor(0xffaa0011);
         canvas.drawCircle(x_start, y_start, point_radius, positionsPaint);
+        positionsPaint.setColor(0xffaa0088);
         canvas.drawCircle(x_finish, y_finish, point_radius, positionsPaint);
 
         //HOLES
@@ -152,45 +178,15 @@ public class Labyrinth {
         }
     }
 
-    Wall wallTouched (ArrayList<Wall> vis_walls, float ball_x, float ball_y) {
-        for (int i = 0; i < vis_walls.size(); i++) {
-            if (wallIsTouched(vis_walls.get(i), ball_x, ball_y)) {
-                Log.i("collision", "Wall touched");
-                return vis_walls.get(i);
-            }
-        }
-        return null;
-    }
 
     boolean wallIsTouched(Wall wall, float ball_x, float ball_y) {
-        float[] wallDetails = collisionsCalc.wallTouchDetails(wall, ball_x, ball_y);
-        float distance = wallDetails[0];
-        float touchX = wallDetails[1], touchY = wallDetails[2];
+        float[] wallDetails = collisionsCalc.wallTouchDetailsA(wall, ball_x, ball_y);
+        float distance = wallDetails[2];
+        float touchX = wallDetails[0], touchY = wallDetails[1];
         float minx = Math.min(wall.begin.x, wall.end.x), maxx = Math.max(wall.begin.x, wall.end.x);
         float miny = Math.min(wall.begin.y, wall.end.y), maxy = Math.max(wall.begin.y, wall.end.y);
-        return ((distance < 10.0f) && (touchX <= maxx)  && (touchX >= minx)
-                                   && (touchY <= maxy)  && (touchY >= miny));
-    }
-
-    Point holeTouched (ArrayList<Point> vis_holes, float ball_x, float ball_y) {
-        for (int i = 0; i < vis_holes.size(); i++) {
-            if (pointIsTouched(vis_holes.get(i), ball_x, ball_y)) {
-                return vis_holes.get(i);
-            }
-        }
-        return null;
-    }
-
-    Point pointTouched (ArrayList<Wall> vis_walls, float ball_x, float ball_y) {
-        for (int i = 0; i < vis_walls.size(); i++) {
-            if (pointIsTouched(vis_walls.get(i).begin, ball_x, ball_y)) {
-                return vis_walls.get(i).begin;
-            }
-            if (pointIsTouched(vis_walls.get(i).end, ball_x, ball_y)) {
-                return vis_walls.get(i).end;
-            }
-        }
-        return null;
+        return ((distance < 10.0f) && (touchX <= maxx + 0.01f)  && (touchX >= minx - 0.01f)
+                                   && (touchY <= maxy + 0.01f)  && (touchY >= miny - 0.01f));
     }
 
     boolean pointIsTouched (Point point, float ball_x, float ball_y) {
@@ -199,19 +195,20 @@ public class Labyrinth {
 
     void checkWallTouchAndReact(Drawer drawer) {
         Ball ball = drawer.ball;
-        Wall touched_wall = wallTouched(
-                getWallsVisibleAtScreen(ball.getX(), ball.getY(),
-                                        drawer.getWidth(), drawer.getHeight()),
-                                        ball.getX(), ball.getY() );
-        Point touched_point = pointTouched(
-                getWallsVisibleAtScreen(ball.getX(), ball.getY(),
-                        drawer.getWidth(), drawer.getHeight()),
-                ball.getX(), ball.getY() );
-        if (touched_wall != null) {
-            ball.collision(touched_wall);
-        }
-        else if (touched_point != null) {
-            ball.collisionWithPoint(touched_point);
+        ArrayList<Wall> vis_walls = getWallsVisibleAtScreen(ball.getX(), ball.getY(),
+                                        drawer.getWidth(), drawer.getHeight());
+        for (int i = 0; i < vis_walls.size(); i++) {
+            Wall wall = vis_walls.get(i);
+            // NB each collisionWithX() can change ball position => don't cache it
+            if (pointIsTouched(wall.begin, ball.getX(), ball.getY())) {
+                ball.collisionWithPoint(wall.begin, false, wall);
+            }
+            else if (pointIsTouched(wall.end, ball.getX(), ball.getY())) {
+                ball.collisionWithPoint(wall.end, true, wall);
+            }
+            else if (wallIsTouched(wall, ball.getX(), ball.getY())) {
+                ball.collisionWithWall(wall);
+            }
         }
     }
 
