@@ -1,6 +1,7 @@
 package com.example.veronika.ball;
 
 import android.content.Intent;
+import android.media.AudioManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
         drawer.ball.labyrinth = labyrinth;
         drawer.labyrinth = labyrinth;
         drawer.ball.initPosition();
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
     }
 
     private void loadLabyrinth() {

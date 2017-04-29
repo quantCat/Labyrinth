@@ -1,6 +1,7 @@
 package com.example.veronika.ball;
 
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -72,7 +73,7 @@ public class StartActivity extends AppCompatActivity {
                 finish();
             }
         });
-
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
 
 }
