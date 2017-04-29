@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         timer.schedule(task, 0, 100);
-        startService(new Intent(MainActivity.this, MusicServiceGame.class));
+        startService(new Intent(this, MusicServiceGame.class));
     }
 
     @Override
@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
         pc.onPause();
         timer.cancel();
-        stopService(new Intent(MainActivity.this, MusicService.class));
+        stopService(new Intent(this, MusicServiceGame.class));
         Toast.makeText(this, "You win!", Toast.LENGTH_LONG);
     }
 

@@ -38,7 +38,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
     protected void onPause() {
         super.onPause();
-        stopService(new Intent(SettingsActivity.this, MusicServiceSet.class));
+        stopService(new Intent(this, MusicServiceSet.class));
     }
 
 }

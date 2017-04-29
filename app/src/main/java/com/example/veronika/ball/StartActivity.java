@@ -84,7 +84,7 @@ public class StartActivity extends AppCompatActivity {
     }
     protected void onPause() {
         super.onPause();
-        stopService(new Intent(StartActivity.this, MusicServiceMenu.class));
+        stopService(new Intent(this, MusicServiceMenu.class));
     }
 
 }

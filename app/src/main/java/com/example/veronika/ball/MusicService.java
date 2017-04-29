@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.IBinder;
+import android.util.Log;
 import android.widget.Toast;
 
 /**
@@ -12,7 +13,7 @@ import android.widget.Toast;
 
 abstract class MusicService extends Service {
     private static final String TAG = "Service";
-    MediaPlayer player;
+    MediaPlayer player = null;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -21,22 +22,29 @@ abstract class MusicService extends Service {
 
     @Override
     public void onCreate() {
-        Toast.makeText(this, "Service Created", Toast.LENGTH_LONG).show();
-
-
+        Log.i("MusicService", String.format("onCreate(): %s", this.getClass().getName()));
+        //-Toast.makeText(this, "Service Created", Toast.LENGTH_LONG).show();
         player = MediaPlayer.create(this, getMusicId());
         player.setLooping(true); // зацикливаем
     }
 
     @Override
     public void onDestroy() {
-        Toast.makeText(this, "Service Stopped", Toast.LENGTH_LONG).show();
-        player.stop();
+        Log.i("MusicService",  String.format("onDestroy(): %s", this.getClass().getName()));
+        //Toast.makeText(this, "Service Destroyed", Toast.LENGTH_LONG).show();
+        if (player != null) {
+            player.stop();
+            player.release();
+            player = null;
+        }
     }
 
     @Override
     public void onStart (Intent intent, int startid) {
-        Toast.makeText(this, "Service Started", Toast.LENGTH_LONG).show();
+        // NB onStart() is usually called twice! That's why don't create player here without
+        // existence check.
+        Log.i("MusicService", String.format("onStart(): %s", this.getClass().getName()));
+        //-Toast.makeText(this, "Service Started", Toast.LENGTH_LONG).show();
         player.start();
     }
 
