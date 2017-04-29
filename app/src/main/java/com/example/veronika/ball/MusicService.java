@@ -10,7 +10,7 @@ import android.widget.Toast;
  * Created by veronika on 18/04/2017.
  */
 
-public class MusicService extends Service {
+abstract class MusicService extends Service {
     private static final String TAG = "Service";
     MediaPlayer player;
 
@@ -24,7 +24,7 @@ public class MusicService extends Service {
         Toast.makeText(this, "Service Created", Toast.LENGTH_LONG).show();
 
 
-        player = MediaPlayer.create(this, R.raw.tobyfox_waterfall);
+        player = MediaPlayer.create(this, getMusicId());
         player.setLooping(true); // зацикливаем
     }
 
@@ -38,5 +38,31 @@ public class MusicService extends Service {
     public void onStart (Intent intent, int startid) {
         Toast.makeText(this, "Service Started", Toast.LENGTH_LONG).show();
         player.start();
+    }
+
+    int getMusicId() {
+        throw new RuntimeException("No music id");
+    }
+}
+
+class MusicServiceGame extends MusicService {
+    @Override
+    int getMusicId() {
+        return R.raw.tobyfox_waterfall;
+    }
+}
+
+class MusicServiceMenu extends MusicService {
+    @Override
+    int getMusicId() {
+        return R.raw.epiphany;
+    }
+}
+
+class MusicServiceSet extends MusicService {
+
+    @Override
+    int getMusicId() {
+        return R.raw.eric_carmen__all_by_myself;
     }
 }
