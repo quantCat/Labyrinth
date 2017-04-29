@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         timer.schedule(task, 0, 100);
+        startService(new Intent(MainActivity.this, MusicServiceGame.class));
     }
 
     @Override

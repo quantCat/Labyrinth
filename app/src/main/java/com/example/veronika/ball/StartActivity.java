@@ -30,7 +30,6 @@ public class StartActivity extends AppCompatActivity {
         bNewGame.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 startActivity(game_intent);
-                //-startService(new Intent(StartActivity.this, MusicService.class));
             }
         });
 
@@ -39,7 +38,6 @@ public class StartActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 startActivity(game_intent);
-                startService(new Intent(StartActivity.this, MusicService.class));
             }
         });
 
