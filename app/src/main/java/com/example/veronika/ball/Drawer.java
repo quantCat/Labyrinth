@@ -4,11 +4,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -41,7 +39,7 @@ public class Drawer extends View {
     }
 
     void coordChange () {
-        values = MainActivity.pc.valuesAccel;
+        values = GameActivity.pc.valuesAccel;
         //Log.i("Drawer.coordChange", String.format("%.3f %.3f", values[0], values[1]));
         ball.coordChange(values[0], values[1]);
         invalidate();

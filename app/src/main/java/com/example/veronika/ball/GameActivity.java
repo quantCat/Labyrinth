@@ -12,7 +12,7 @@ import android.widget.Toast;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MainActivity extends AppCompatActivity {
+public class GameActivity extends AppCompatActivity {
 
     TextView tvText;
     public static PositionCheck pc;
@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.i("trace", "MainActivity.onCreate");
+        Log.i("trace", "GameActivity.onCreate");
         setContentView(R.layout.activity_main);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 

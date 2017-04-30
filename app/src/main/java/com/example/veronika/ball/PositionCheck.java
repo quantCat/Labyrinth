@@ -8,14 +8,13 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.util.Log;
 
 import static android.content.Context.SENSOR_SERVICE;
 
 public class PositionCheck {
     StringBuilder sb = new StringBuilder();
     public float[] valuesAccel = new float[2];
-    MainActivity activity;
+    GameActivity activity;
     SensorManager sensorManager;
     Sensor sensorAccel;
 
@@ -32,7 +31,7 @@ public class PositionCheck {
 
     };
 
-    public PositionCheck(MainActivity a) {
+    public PositionCheck(GameActivity a) {
         activity = a;
         sensorManager = (SensorManager) activity.getSystemService(SENSOR_SERVICE);
         sensorAccel = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
