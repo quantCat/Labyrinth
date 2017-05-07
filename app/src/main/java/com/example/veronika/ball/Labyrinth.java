@@ -123,12 +123,15 @@ public class Labyrinth {
         try {
             BufferedReader bufferedReader = null;
             try {
-                InputStream inputStream = context.getResources().openRawResource(R.raw.map);
+                InputStream inputStream = context.getResources().openRawResource(R.raw.map2);
                 bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
                 String line;
                 while ((line = bufferedReader.readLine()) != null) {
                     StringReader lr = new StringReader(line);
                     Scanner lrs = new Scanner(lr);
+                    if (!lrs.hasNext()) {
+                        continue;
+                    }
                     String kind = lrs.next();
                     if (kind.equals("//")) {
                         continue;
@@ -159,7 +162,7 @@ public class Labyrinth {
                         size = new Point(x0, y0);
                     }
 
-                    if (kind.equals("hole")) {
+                    if (kind.equals("h") || kind.equals("hole")) {
                         int x0 = lrs.nextInt();
                         int y0 = lrs.nextInt();
                         holes.add(new Point(x0, y0));
