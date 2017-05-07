@@ -78,7 +78,7 @@ public class Drawer extends View {
         rectDest.set((int)x0, (int)y0, (int)(x1), (int)(y1));
         canvas.drawBitmap(static_bg, rectSrc, rectDest, paint);
         labyrinth.draw(canvas, ball, width, height);
-        ball.draw(canvas, width, height);
+        ball.draw(getContext(), canvas, width, height);
     }
 
     public boolean isGameFinished() {

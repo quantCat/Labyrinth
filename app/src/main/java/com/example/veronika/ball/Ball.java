@@ -1,8 +1,20 @@
 package com.example.veronika.ball;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
+
+import static android.R.attr.left;
+import static android.R.attr.right;
+import static com.example.veronika.ball.R.id.bottom;
+import static com.example.veronika.ball.R.id.top;
 
 /**
  * Created by veronika on 25/02/2017.
@@ -60,13 +72,33 @@ class Ball {
         //Log.i("trace", String.format("Ball.coordChange: x=%.3f y=%.3f width=%d height=%d", x, y, width, height));
     }
 
-    public void draw(Canvas canvas, int width, int height) {
+    public void draw(Context context, Canvas canvas, int width, int height) {
         final int min_dim = Math.min(width, height);
         final float ball_radius = min_dim / 10.0f;
         Paint ballPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        ballPaint.setColor(0xff808000);
-        canvas.drawCircle(width/2, height/2, ball_radius, ballPaint);
+        //ballPaint.setColor(0xff808000);
+        //canvas.drawCircle(width/2, height/2, ball_radius, ballPaint);
+        Bitmap hamster = BitmapFactory.decodeResource(context.getResources(), R.raw.hamster);
+        Bitmap hamster1 = Bitmap.createScaledBitmap(hamster, (int)ball_radius*2, (int)ball_radius*2, false);
+        float angle = (float)Math.atan2(vx, -vy);
+        //RotateBitmap(hamster_drawable, angle);
+        Matrix matrix = new Matrix();
+        //-matrix.setScale(1,1);
+        matrix.postRotate((float)(angle*180/Math.PI));
+        if (hamster1.getWidth() <= 0 || hamster1.getHeight() <= 0) {
+            throw new RuntimeException(String.format("Wrong hamster1 size: %d %d", hamster1.getWidth(), hamster1.getHeight()));
+        }
+        Bitmap hamster_drawable = Bitmap.createBitmap(hamster1, 0, 0, hamster1.getWidth(), hamster1.getHeight(), matrix, false);
+        //Rect rectDest = new Rect(0, 0, hamster.getWidth(), hamster.getHeight());
+        canvas.drawBitmap(hamster_drawable, width/2 - ball_radius, height/2 - ball_radius, ballPaint);
     }
+
+  /*  public static Bitmap RotateBitmap(Bitmap source, float angle)
+    {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
+    }*/
 
     public void collisionWithWall (Labyrinth.Wall wall) {
         //vector 1, l=1, parallel to the wall
