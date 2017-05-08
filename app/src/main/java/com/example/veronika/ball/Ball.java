@@ -142,6 +142,12 @@ class Ball {
 
         Log.i("Ball.collisionWithWall", String.format("at the end: x=%.2f y=%.2f vx=%.2f vy=%.2f",
                     x, y, vx, vy));
+
+        private SoundPool sounds;
+        private int sExplosion;
+
+        sounds = new SoundPool(10, AudioManager.STREAM_MUSIC,0);
+        sExplosion = sounds.load(this, R.raw.hit, 1);
     }
 
     public void collisionWithPoint (Labyrinth.Point point, boolean is_end, Labyrinth.Wall wall) {
