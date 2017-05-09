@@ -33,19 +33,18 @@ public class StartActivity extends AppCompatActivity {
         final Button bcontinueGame = (Button) findViewById(R.id.button_continue_game);
         bcontinueGame.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
                 startActivity(game_intent);
             }
         });
 
-        final Intent settings_intent = new Intent(this, SettingsActivity.class);
+        /*final Intent settings_intent = new Intent(this, SettingsActivity.class);
         final Button bsettings = (Button) findViewById(R.id.button_settings);
         bsettings.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 startActivity(settings_intent);
                 startService(new Intent(StartActivity.this, MusicServiceSet.class));
             }
-        });
+        });*/
 
         final Intent help_intent = new Intent(this, HelpActivity.class);
         final Button bhelp = (Button) findViewById(R.id.button_help);

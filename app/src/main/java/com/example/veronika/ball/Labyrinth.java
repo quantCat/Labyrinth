@@ -215,6 +215,19 @@ public class Labyrinth {
         }
     }
 
+    boolean checkHoleTouch (Drawer drawer) {
+        Ball ball = drawer.ball;
+        ArrayList<Point> vis_holes = getHolesVisibleAtScreen(ball.getX(), ball.getY(),
+                drawer.getWidth(), drawer.getHeight());
+        for (int i = 0; i < vis_holes.size(); i++) {
+            Point hole = vis_holes.get(i);
+            if (pointIsTouched(hole, ball.getX(), ball.getY())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     ArrayList<Wall> getWallsVisibleAtScreen(float x, float y, int width, int height) {
         final float min_dim = Math.min(width, height);
         final float x_viewPoint = (float) width * 100.0f / min_dim;
@@ -225,6 +238,18 @@ public class Labyrinth {
         final int y_view_max = (int) Math.ceil(y + y_viewPoint * 0.5f);
         ArrayList <Wall> vis_walls = getVisibleWalls(x_view_min, y_view_min, x_view_max, y_view_max);
         return vis_walls;
+    }
+
+    ArrayList<Point> getHolesVisibleAtScreen(float x, float y, int width, int height) {
+        final float min_dim = Math.min(width, height);
+        final float x_viewPoint = (float) width * 100.0f / min_dim;
+        final float y_viewPoint = (float) height * 100.0f / min_dim;
+        final int x_view_min = (int) Math.floor(x - x_viewPoint * 0.5f);
+        final int x_view_max = (int) Math.ceil(x + x_viewPoint * 0.5f);
+        final int y_view_min = (int) Math.floor(y - y_viewPoint * 0.5f);
+        final int y_view_max = (int) Math.ceil(y + y_viewPoint * 0.5f);
+        ArrayList<Point> vis_holes = getVisibleHoles(x_view_min, y_view_min, x_view_max, y_view_max);
+        return vis_holes;
     }
 
     ArrayList <Wall> getVisibleWalls(float x0, float y0, float x1, float y1) {

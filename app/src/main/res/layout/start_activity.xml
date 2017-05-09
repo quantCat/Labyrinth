@@ -19,12 +19,12 @@
         android:layout_height="wrap_content"
         android:layout_weight="0.19" />
 
-    <Button
+   <!-- <Button
         android:text="SETTINGS"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/button_settings"
-        android:layout_weight="0.17" />
+        android:layout_weight="0.17" /> -->
 
     <Button
         android:text="HELP"

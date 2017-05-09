@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
@@ -10,8 +11,39 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.veronika.ball.GameActivity">
 
-    <TextView
+   <!-- <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Ball is reacting on accelerometer values" />
+        android:text="Ball is reacting on accelerometer values"
+        android:id="@+id/textView" /> -->
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/help"
+        android:id="@+id/imageView"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:text="Menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imageView"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="27dp"
+        android:id="@+id/mn_btn" />
+
+    <Button
+        android:text="Start game"
+        android:id="@+id/st_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/mn_btn"
+        android:layout_alignBottom="@+id/mn_btn"
+        android:layout_toEndOf="@+id/mn_btn"
+        android:layout_marginStart="62dp" />
+
+    <!-- android:layout_below="@+id/textView" -->
 </RelativeLayout>

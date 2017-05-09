@@ -24,6 +24,11 @@ public class MapChooseActivity extends Activity {
             radios.addView(rb);
             Log.i("MapChooseActivity", String.format("added map: %s", i));
         }
+        addListenerOnButton();
+    }
+
+    public void addListenerOnButton() {
+        RadioGroup radios = (RadioGroup)findViewById(R.id.maplist);
     }
 
     public Map<String, String> getMapList() {

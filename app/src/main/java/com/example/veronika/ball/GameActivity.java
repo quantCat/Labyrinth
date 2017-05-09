@@ -61,8 +61,12 @@ public class GameActivity extends AppCompatActivity {
                         drawer = (Drawer)findViewById(R.id.view);
                         drawer.coordChange();
                         labyrinth.checkWallTouchAndReact(drawer);
+                        boolean hole_touched = labyrinth.checkHoleTouch(drawer);
+                        if (hole_touched) {
+                            gameFinishedUnsuccessfully();;
+                        }
                         if (drawer.isGameFinished()) {
-                            onPause();
+                            gameFinishedSuccessfully();
                         }
                     }
                 });
@@ -77,8 +81,30 @@ public class GameActivity extends AppCompatActivity {
         super.onPause();
         pc.onPause();
         timer.cancel();
+    }
+
+    protected void gameFinishedSuccessfully () {
+        super.onPause();
+        pc.onPause();
+        timer.cancel();
         stopService(new Intent(this, MusicServiceGame.class));
-        Toast.makeText(this, "You win!", Toast.LENGTH_LONG);
+        Intent game_finished = new Intent(this, StartActivity.class);
+        game_finished.putExtra("STATUS", "WIN");
+        startActivity(game_finished);
+
+        //Toast.makeText(this, "You win!", Toast.LENGTH_LONG);
+    }
+
+    protected void gameFinishedUnsuccessfully () {
+        super.onPause();
+        pc.onPause();
+        timer.cancel();
+        stopService(new Intent(this, MusicServiceGame.class));
+        Intent game_finished = new Intent(this, StartActivity.class);
+        game_finished.putExtra("STATUS", "LOSE");
+        startActivity(game_finished);
+
+        //Toast.makeText(this, "You win!", Toast.LENGTH_LONG);
     }
 
     void showInfo() {
