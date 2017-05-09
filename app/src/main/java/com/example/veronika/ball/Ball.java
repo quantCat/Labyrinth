@@ -90,7 +90,12 @@ class Ball {
         }
         Bitmap hamster_drawable = Bitmap.createBitmap(hamster1, 0, 0, hamster1.getWidth(), hamster1.getHeight(), matrix, false);
         //Rect rectDest = new Rect(0, 0, hamster.getWidth(), hamster.getHeight());
-        canvas.drawBitmap(hamster_drawable, width/2 - ball_radius, height/2 - ball_radius, ballPaint);
+        drawFromCenter(canvas, hamster_drawable, width/2, height/2, ballPaint);
+    }
+
+    public void drawFromCenter (Canvas canvas, Bitmap bitmap, float centerX, float centerY, Paint paint) {
+        float r = bitmap.getWidth()/2;
+        canvas.drawBitmap(bitmap, centerX - r, centerY - r, paint);
     }
 
   /*  public static Bitmap RotateBitmap(Bitmap source, float angle)
