@@ -9,30 +9,31 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="..."
-        android:id="@+id/game_result" />
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
 
-    <Button
-        android:text="To the menu"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/imageView"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="25dp"
-        android:layout_marginTop="27dp"
-        android:id="@+id/tmn_btn" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="Game result:"
+            android:id="@+id/game_result" />
 
-    <Button
-        android:text="Restart level"
-        android:id="@+id/rst_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/mn_btn"
-        android:layout_alignBottom="@+id/mn_btn"
-        android:layout_toEndOf="@+id/mn_btn"
-        android:layout_marginStart="62dp" />
+        <Button
+            android:text="Restart level"
+            android:id="@+id/button_restart"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            />
+
+        <Button
+            android:text="To the menu"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:id="@+id/button_to_menu" />
+
+    </LinearLayout>
 
 </RelativeLayout>

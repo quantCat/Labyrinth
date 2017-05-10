@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
@@ -14,24 +16,43 @@ import java.util.TreeMap;
 
 public class MapChooseActivity extends Activity {
 
+    int map_ids[];
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map_chooser_activity);
         Map<String, String> map_list = getMapList();
+        Map<String, Integer> map_id_list = getMapIdList();
         RadioGroup radios = (RadioGroup)findViewById(R.id.maplist);
 
+        map_ids = new int[map_list.size()];
+        int j = 0;
         for (String i: map_list.keySet()) {
             RadioButton rb = new RadioButton(this);
-            rb.setText(i);
+            rb.setId(j);
+            rb.setText(map_list.get(i));
+            map_ids[j] = map_id_list.get(i);
             radios.addView(rb);
             Log.i("MapChooseActivity", String.format("added map: %s", i));
+            ++j;
         }
-        addListenerOnButton();
-    }
-
-    public void addListenerOnButton() {
-        RadioGroup radios = (RadioGroup)findViewById(R.id.maplist);
+        final MapChooseActivity self = this;
+        Button b;
+        b = (Button) findViewById(R.id.button_new_game);
+        b.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                self.startGame(false);
+            }
+        });
+        b = (Button) findViewById(R.id.button_continue_game);
+        b.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                self.startGame(true);
+            }
+        });
     }
 
     @Override
@@ -54,6 +75,16 @@ public class MapChooseActivity extends Activity {
         startActivity(game_intent);
 
         return super.onMenuItemSelected(featureId, item);
+    }
+
+    void startGame(boolean shall_continue) {
+        // TODO
+        RadioGroup rg = (RadioGroup) findViewById(R.id.maplist);
+        int selected = rg.getCheckedRadioButtonId();
+        Intent intent = new Intent(this, GameActivity.class).
+                putExtra("MAP", map_ids[selected]);
+        startActivity(intent);
+        finish();
     }
 
     public Map<String, String> getMapList() {

@@ -1,7 +1,9 @@
 package com.example.veronika.ball;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -18,10 +20,12 @@ public class CreditsActivity extends AppCompatActivity {
 
         final Intent menu_intent = new Intent(this, StartActivity.class);
         final Button bm = (Button) findViewById(R.id.back_btn);
+        final Activity self = this;
         bm.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                startActivity(menu_intent);
+                NavUtils.navigateUpFromSameTask(self);
             }
         });
     }
+
 }

@@ -17,11 +17,8 @@ public class StartActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.start_activity);
 
-
-
-        final Intent game_intent = new Intent(this, GameActivity.class);
-
-        startService(new Intent(this, MusicServiceMenu.class));
+        final Intent game_intent = new Intent(this, MapChooseActivity.class).
+                addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 
         final Button bNewGame = (Button) findViewById(R.id.button_new_game);
         bNewGame.setOnClickListener(new View.OnClickListener() {
@@ -46,7 +43,8 @@ public class StartActivity extends AppCompatActivity {
             }
         });*/
 
-        final Intent help_intent = new Intent(this, HelpActivity.class);
+        final Intent help_intent = new Intent(this, HelpActivity.class).
+                addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         final Button bhelp = (Button) findViewById(R.id.button_help);
         bhelp.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -54,7 +52,8 @@ public class StartActivity extends AppCompatActivity {
             }
         });
 
-        final Intent credits_intent = new Intent(this, CreditsActivity.class);
+        final Intent credits_intent = new Intent(this, CreditsActivity.class).
+                addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         final Button bcredits = (Button) findViewById(R.id.button_credits);
         bcredits.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -69,8 +68,6 @@ public class StartActivity extends AppCompatActivity {
             }
         });
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
-
-
 }
 
     @Override

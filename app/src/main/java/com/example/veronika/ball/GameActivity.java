@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -20,7 +19,7 @@ public class GameActivity extends AppCompatActivity {
     StringBuilder sb = new StringBuilder();
     Labyrinth labyrinth;
     Drawer drawer;
-
+    int game_map_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +41,9 @@ public class GameActivity extends AppCompatActivity {
 
     private void loadLabyrinth() {
         labyrinth = new Labyrinth();
-        labyrinth.readLabyrinth(this);
+        Intent intent = getIntent();
+        game_map_id = intent.getIntExtra("MAP", R.raw.map1);
+        labyrinth.readLabyrinth(this, game_map_id);
     }
 
     @Override
@@ -51,6 +52,7 @@ public class GameActivity extends AppCompatActivity {
         pc.onResume();
 
         timer = new Timer();
+        final GameActivity self = this;
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
@@ -61,12 +63,13 @@ public class GameActivity extends AppCompatActivity {
                         drawer = (Drawer)findViewById(R.id.view);
                         drawer.coordChange();
                         labyrinth.checkWallTouchAndReact(drawer);
+                        labyrinth.checkAndReactStarTouch(drawer);
                         boolean hole_touched = labyrinth.checkHoleTouch(drawer);
                         if (hole_touched) {
-                            gameFinishedUnsuccessfully();;
+                            self.gameFinished(false);
                         }
                         if (drawer.isGameFinished()) {
-                            gameFinishedSuccessfully();
+                            self.gameFinished(true);
                         }
                     }
                 });
@@ -81,30 +84,17 @@ public class GameActivity extends AppCompatActivity {
         super.onPause();
         pc.onPause();
         timer.cancel();
+        stopService(new Intent(this, MusicServiceGame.class));
     }
 
-    protected void gameFinishedSuccessfully () {
-        super.onPause();
-        pc.onPause();
-        timer.cancel();
-        stopService(new Intent(this, MusicServiceGame.class));
-        Intent game_finished = new Intent(this, StartActivity.class);
-        game_finished.putExtra("STATUS", "WIN");
+    protected void gameFinished(boolean success) {
+        Intent game_finished = new Intent(this, GameFinishedActivity.class);
+        game_finished.putExtra("STATUS", success ? "WIN" : "LOSE");
+        game_finished.putExtra("MAP", game_map_id);
+        int stars = 3;
+        game_finished.putExtra("STARS", stars);
         startActivity(game_finished);
-
-        //Toast.makeText(this, "You win!", Toast.LENGTH_LONG);
-    }
-
-    protected void gameFinishedUnsuccessfully () {
-        super.onPause();
-        pc.onPause();
-        timer.cancel();
-        stopService(new Intent(this, MusicServiceGame.class));
-        Intent game_finished = new Intent(this, StartActivity.class);
-        game_finished.putExtra("STATUS", "LOSE");
-        startActivity(game_finished);
-
-        //Toast.makeText(this, "You win!", Toast.LENGTH_LONG);
+        finish();
     }
 
     void showInfo() {
