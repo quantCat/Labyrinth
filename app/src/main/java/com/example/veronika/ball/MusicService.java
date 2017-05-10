@@ -63,7 +63,7 @@ class MusicServiceGame extends MusicService {
 class MusicServiceMenu extends MusicService {
     @Override
     int getMusicId() {
-        return R.raw.epiphany;
+        return R.raw.beta_love;
     }
 }
 
