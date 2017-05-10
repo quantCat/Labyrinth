@@ -81,10 +81,12 @@ public class MapChooseActivity extends Activity {
         // TODO
         RadioGroup rg = (RadioGroup) findViewById(R.id.maplist);
         int selected = rg.getCheckedRadioButtonId();
-        Intent intent = new Intent(this, GameActivity.class).
-                putExtra("MAP", map_ids[selected]);
-        startActivity(intent);
-        finish();
+        if (selected >= 0) {
+            Intent intent = new Intent(this, GameActivity.class).
+                    putExtra("MAP", map_ids[selected]);
+            startActivity(intent);
+            finish();
+        }
     }
 
     public Map<String, String> getMapList() {
