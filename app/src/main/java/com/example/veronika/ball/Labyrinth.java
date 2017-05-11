@@ -62,11 +62,13 @@ public class Labyrinth {
     };
     ArrayList <Wall> walls;
     ArrayList <Point> holes;
+    ArrayList<Point> stars;
     Point start, finish;
     Point size;
     CollisionsCalculator collisionsCalc = new CollisionsCalculator();
+    int stars_collected = 0;
 
-    public void draw(Canvas canvas, Ball ball, int width, int height) {
+    public void draw(Context context, Canvas canvas, Ball ball, int width, int height) {
 
         //PREPARE TO DRAW
         final float min_dim = Math.min(width, height);
@@ -78,6 +80,7 @@ public class Labyrinth {
         final int y_view_max = (int) Math.ceil(ball.getY() + y_viewPoint * 0.5f);
         ArrayList <Wall> vis_walls = getVisibleWalls(x_view_min, y_view_min, x_view_max, y_view_max);
         ArrayList<Point> vis_holes = getVisibleHoles(x_view_min, y_view_min, x_view_max, y_view_max);
+        ArrayList<Point> vis_stars = getVisibleStars(x_view_min, y_view_min, x_view_max, y_view_max);
 
         //WALLS
         Paint wallPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -107,19 +110,37 @@ public class Labyrinth {
 
         //HOLES
         Paint holesPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        positionsPaint.setColor(0xff110055);
-        final float hole_radius = min_dim /10.0f;
+        holesPaint.setColor(0xff110055);
+        final float hole_radius = min_dim / 10.0f;
         for (int i = 0; i < vis_holes.size(); ++i) {
             Point hole = vis_holes.get(i);
-            float hx = (hole.x - x_view_min)  * (float) width  / x_viewPoint;
-            float hy = (hole.y - y_view_min)  * (float) height  / y_viewPoint;
+            float hx = (hole.x - x_view_min)  * (float) width / x_viewPoint;
+            float hy = (hole.y - y_view_min)  * (float) height / y_viewPoint;
             canvas.drawCircle(hx, hy, hole_radius, holesPaint);
         }
+
+        //STARS
+        Paint starsPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        holesPaint.setColor(0xff110055);
+        Bitmap star_bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.star);
+        Bitmap star_drawable = Bitmap.createScaledBitmap(star_bitmap, 10, 10, false);
+        for (int i = 0; i < vis_stars.size(); ++i) {
+            Point star = vis_stars.get(i);
+            float hx = (star.x - x_view_min)  * (float) width / x_viewPoint;
+            float hy = (star.y - y_view_min)  * (float) height / y_viewPoint;
+            drawFromCenter(canvas, star_drawable, hx, hy, starsPaint);
+        }
+    }
+
+    public void drawFromCenter (Canvas canvas, Bitmap bitmap, float centerX, float centerY, Paint paint) {
+        float r = bitmap.getWidth()/2;
+        canvas.drawBitmap(bitmap, centerX - r, centerY - r, paint);
     }
 
     void readLabyrinth(Context context, int id) {
         walls = new ArrayList<>();
         holes = new ArrayList<>();
+        stars = new ArrayList<>();
         try {
             BufferedReader bufferedReader = null;
             try {
@@ -168,6 +189,11 @@ public class Labyrinth {
                         holes.add(new Point(x0, y0));
                     }
 
+                    if (kind.equals("s") || kind.equals("star")) {
+                        int x0 = lrs.nextInt();
+                        int y0 = lrs.nextInt();
+                        stars.add(new Point(x0, y0));
+                    }
                 }
             } finally {
                 if (bufferedReader != null) {
@@ -215,7 +241,21 @@ public class Labyrinth {
         }
     }
 
-    boolean checkHoleTouch (Drawer drawer) {
+    void checkAndReactStarTouch (Drawer drawer) {
+        Ball ball = drawer.ball;
+        ArrayList<Point> vis_stars = getStarsVisibleAtScreen(ball.getX(), ball.getY(),
+                drawer.getWidth(), drawer.getHeight());
+        for (int i = 0; i < vis_stars.size(); i++) {
+            Point hole = vis_stars.get(i);
+            if (pointIsTouched(hole, ball.getX(), ball.getY())) {
+                vis_stars.remove(i);
+                Log.i("star", "star collected");
+                stars_collected++;
+            }
+        }
+    }
+
+    boolean checkHoleTouch(Drawer drawer) {
         Ball ball = drawer.ball;
         ArrayList<Point> vis_holes = getHolesVisibleAtScreen(ball.getX(), ball.getY(),
                 drawer.getWidth(), drawer.getHeight());
@@ -252,6 +292,18 @@ public class Labyrinth {
         return vis_holes;
     }
 
+    ArrayList<Point> getStarsVisibleAtScreen(float x, float y, int width, int height) {
+        final float min_dim = Math.min(width, height);
+        final float x_viewPoint = (float) width * 100.0f / min_dim;
+        final float y_viewPoint = (float) height * 100.0f / min_dim;
+        final int x_view_min = (int) Math.floor(x - x_viewPoint * 0.5f);
+        final int x_view_max = (int) Math.ceil(x + x_viewPoint * 0.5f);
+        final int y_view_min = (int) Math.floor(y - y_viewPoint * 0.5f);
+        final int y_view_max = (int) Math.ceil(y + y_viewPoint * 0.5f);
+        ArrayList<Point> vis_stars = getVisibleStars(x_view_min, y_view_min, x_view_max, y_view_max);
+        return vis_stars;
+    }
+
     ArrayList <Wall> getVisibleWalls(float x0, float y0, float x1, float y1) {
         ArrayList<Wall> visible = new ArrayList<>();
         for (int i = 0; i < walls.size(); i++) {
@@ -273,6 +325,20 @@ public class Labyrinth {
                 current_hole.y > y0 &&
                 current_hole.y < y1 ) {
                 visible.add(current_hole);
+            }
+        }
+        return visible;
+    }
+
+    ArrayList <Point> getVisibleStars(float x0, float y0, float x1, float y1) {
+        ArrayList<Point> visible = new ArrayList<>();
+        for (int i = 0; i < stars.size(); i++) {
+            Point current_star = stars.get(i);
+            if (current_star.x > x0 &&
+                    current_star.x < x1 &&
+                    current_star.y > y0 &&
+                    current_star.y < y1 ) {
+                visible.add(current_star);
             }
         }
         return visible;
