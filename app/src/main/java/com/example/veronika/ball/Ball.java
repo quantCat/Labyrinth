@@ -6,15 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.util.Log;
-
-import static android.R.attr.left;
-import static android.R.attr.right;
-import static com.example.veronika.ball.R.id.bottom;
-import static com.example.veronika.ball.R.id.top;
 
 /**
  * Created by veronika on 25/02/2017.
@@ -78,7 +70,7 @@ class Ball {
         Paint ballPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         //ballPaint.setColor(0xff808000);
         //canvas.drawCircle(width/2, height/2, ball_radius, ballPaint);
-        Bitmap hamster = BitmapFactory.decodeResource(context.getResources(), R.raw.hamster);
+        Bitmap hamster = BitmapFactory.decodeResource(context.getResources(), R.drawable.hamster);
         Bitmap hamster1 = Bitmap.createScaledBitmap(hamster, (int)ball_radius*2, (int)ball_radius*2, false);
         float angle = (float)Math.atan2(vx, -vy);
         //RotateBitmap(hamster_drawable, angle);
@@ -147,12 +139,6 @@ class Ball {
 
         Log.i("Ball.collisionWithWall", String.format("at the end: x=%.2f y=%.2f vx=%.2f vy=%.2f",
                     x, y, vx, vy));
-
-        private SoundPool sounds;
-        private int sExplosion;
-
-        sounds = new SoundPool(10, AudioManager.STREAM_MUSIC,0);
-        sExplosion = sounds.load(this, R.raw.hit, 1);
     }
 
     public void collisionWithPoint (Labyrinth.Point point, boolean is_end, Labyrinth.Wall wall) {
