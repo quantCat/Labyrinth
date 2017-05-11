@@ -117,13 +117,13 @@ public class Labyrinth {
         }
     }
 
-    void readLabyrinth(Context context) {
+    void readLabyrinth(Context context, int id) {
         walls = new ArrayList<>();
         holes = new ArrayList<>();
         try {
             BufferedReader bufferedReader = null;
             try {
-                InputStream inputStream = context.getResources().openRawResource(R.raw.map2);
+                InputStream inputStream = context.getResources().openRawResource(id);
                 bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
                 String line;
                 while ((line = bufferedReader.readLine()) != null) {
