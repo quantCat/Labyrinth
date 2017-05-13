@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Region;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -68,19 +69,37 @@ public class Labyrinth {
     CollisionsCalculator collisionsCalc = new CollisionsCalculator();
     int stars_collected = 0;
 
-    public void draw(Context context, Canvas canvas, Ball ball, int width, int height) {
+    public void draw(Context context, Canvas canvas, Drawer drawer, Paint nbgPaint,
+                     Ball ball, int width, int height) {
 
         //PREPARE TO DRAW
         final float min_dim = Math.min(width, height);
-        final float x_viewPoint = (float) width * 100.0f / min_dim;
-        final float y_viewPoint = (float) height * 100.0f / min_dim;
-        final int x_view_min = (int) Math.floor(ball.getX() - x_viewPoint * 0.5f);
-        final int x_view_max = (int) Math.ceil(ball.getX() + x_viewPoint * 0.5f);
-        final int y_view_min = (int) Math.floor(ball.getY() - y_viewPoint * 0.5f);
-        final int y_view_max = (int) Math.ceil(ball.getY() + y_viewPoint * 0.5f);
-        ArrayList <Wall> vis_walls = getVisibleWalls(x_view_min, y_view_min, x_view_max, y_view_max);
-        ArrayList<Point> vis_holes = getVisibleHoles(x_view_min, y_view_min, x_view_max, y_view_max);
-        ArrayList<Point> vis_stars = getVisibleStars(x_view_min, y_view_min, x_view_max, y_view_max);
+        final float lab_x_size = (float) width * 100.0f / min_dim;
+        final float lab_y_size = (float) height * 100.0f / min_dim;
+        final int lab_x_view_min = (int) Math.floor(ball.getX() - lab_x_size * 0.5f);
+        final int lab_x_view_max = (int) Math.ceil(ball.getX() + lab_x_size * 0.5f);
+        final int lab_y_view_min = (int) Math.floor(ball.getY() - lab_y_size * 0.5f);
+        final int lab_y_view_max = (int) Math.ceil(ball.getY() + lab_y_size * 0.5f);
+        ArrayList <Wall> vis_walls = getVisibleWalls(lab_x_view_min, lab_y_view_min, lab_x_view_max, lab_y_view_max);
+        ArrayList<Point> vis_holes = getVisibleHoles(lab_x_view_min, lab_y_view_min, lab_x_view_max, lab_y_view_max);
+        ArrayList<Point> vis_stars = getVisibleStars(lab_x_view_min, lab_y_view_min, lab_x_view_max, lab_y_view_max);
+
+        // Nearer background (only within labyrinth)
+        int screen_x_lab_min = (int)Math.floor((0 - lab_x_view_min) * (float) width  / lab_x_size);
+        int screen_y_lab_min = (int)Math.ceil((0 - lab_y_view_min) * (float) height  / lab_y_size);
+        int screen_x_lab_max = (int)Math.floor((size.x - lab_x_view_min) * (float) width  / lab_x_size);
+        int screen_y_lab_max = (int)Math.ceil((size.y - lab_y_view_min) * (float) height  / lab_y_size);
+        int screen_nbg_x = drawer.nearer_background.getWidth();
+        int screen_nbg_y = drawer.nearer_background.getHeight();
+        for (int xx = screen_x_lab_min; xx <= screen_x_lab_max; xx += screen_nbg_x) {
+            int clip_xx = Math.min(xx + screen_nbg_x, screen_x_lab_max);
+            for (int yy = screen_y_lab_min; yy <= screen_y_lab_max; yy += screen_nbg_y) {
+                int clip_yy = Math.min(yy + screen_nbg_y, screen_y_lab_max);
+                canvas.clipRect(xx, yy, clip_xx, clip_yy, Region.Op.REPLACE);
+                canvas.drawBitmap(drawer.nearer_background, xx, yy, nbgPaint);
+            }
+        }
+        canvas.clipRect(0, 0, width, height, Region.Op.REPLACE);
 
         //WALLS
         Paint wallPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -88,25 +107,26 @@ public class Labyrinth {
         wallPaint.setStrokeWidth(min_dim * 0.02f);
         for (int i = 0; i < vis_walls.size(); ++i) {
             Wall wall = vis_walls.get(i);
-            float x0 = (wall.begin.x - x_view_min) * (float) width  / x_viewPoint;
-            float y0 = (wall.begin.y - y_view_min) * (float) height / y_viewPoint;
-            float x1 = (wall.end.x   - x_view_min) * (float) width  / x_viewPoint;
-            float y1 = (wall.end.y   - y_view_min) * (float) height / y_viewPoint;
-            canvas.drawLine(x0, y0, x1, y1, wallPaint);
+            float screen_x_begin = (wall.begin.x - lab_x_view_min) * (float) width  / lab_x_size;
+            float screen_y_begin = (wall.begin.y - lab_y_view_min) * (float) height / lab_y_size;
+            float screen_x_end = (wall.end.x   - lab_x_view_min) * (float) width  / lab_x_size;
+            float screen_y_end = (wall.end.y   - lab_y_view_min) * (float) height / lab_y_size;
+            canvas.drawLine(screen_x_begin, screen_y_begin, screen_x_end, screen_y_end, wallPaint);
         }
 
         //START AND FINISH POINTS
         Paint positionsPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         final float point_radius = min_dim / (2*10.0f);
-        float x_start  = (start.x - x_view_min)  * (float) width  / x_viewPoint;
-        float y_start  = (start.y - y_view_min)  * (float) height / y_viewPoint;
-        float x_finish = (finish.x - x_view_min) * (float) width  / x_viewPoint;
-        float y_finish = (finish.y - y_view_min) * (float) height / y_viewPoint;
-        Log.i("Labyrinth.draw", String.format("start=%.2f:%.2f finish=%.2f:%.2f", x_start, y_start, x_finish, y_finish));
+        float screen_x_start  = (start.x - lab_x_view_min)  * (float) width  / lab_x_size;
+        float screen_y_start  = (start.y - lab_y_view_min)  * (float) height / lab_y_size;
+        float screen_x_finish = (finish.x - lab_x_view_min) * (float) width  / lab_x_size;
+        float screen_y_finish = (finish.y - lab_y_view_min) * (float) height / lab_y_size;
+        Log.i("Labyrinth.draw", String.format("start=%.2f:%.2f finish=%.2f:%.2f",
+                screen_x_start, screen_y_start, screen_x_finish, screen_y_finish));
         positionsPaint.setColor(0xffaa0011);
-        canvas.drawCircle(x_start, y_start, point_radius, positionsPaint);
+        canvas.drawCircle(screen_x_start, screen_y_start, point_radius, positionsPaint);
         positionsPaint.setColor(0xffaa0088);
-        canvas.drawCircle(x_finish, y_finish, point_radius, positionsPaint);
+        canvas.drawCircle(screen_x_finish, screen_y_finish, point_radius, positionsPaint);
 
         //HOLES
         Paint holesPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -114,9 +134,9 @@ public class Labyrinth {
         final float hole_radius = min_dim / 10.0f;
         for (int i = 0; i < vis_holes.size(); ++i) {
             Point hole = vis_holes.get(i);
-            float hx = (hole.x - x_view_min)  * (float) width / x_viewPoint;
-            float hy = (hole.y - y_view_min)  * (float) height / y_viewPoint;
-            canvas.drawCircle(hx, hy, hole_radius, holesPaint);
+            float screen_x_hole = (hole.x - lab_x_view_min)  * (float) width / lab_x_size;
+            float screen_y_hole = (hole.y - lab_y_view_min)  * (float) height / lab_y_size;
+            canvas.drawCircle(screen_x_hole, screen_y_hole, hole_radius, holesPaint);
         }
 
         //STARS
@@ -126,9 +146,9 @@ public class Labyrinth {
         Bitmap star_drawable = Bitmap.createScaledBitmap(star_bitmap, 10, 10, false);
         for (int i = 0; i < vis_stars.size(); ++i) {
             Point star = vis_stars.get(i);
-            float hx = (star.x - x_view_min)  * (float) width / x_viewPoint;
-            float hy = (star.y - y_view_min)  * (float) height / y_viewPoint;
-            drawFromCenter(canvas, star_drawable, hx, hy, starsPaint);
+            float screen_x_star = (star.x - lab_x_view_min)  * (float) width / lab_x_size;
+            float screen_y_star = (star.y - lab_y_view_min)  * (float) height / lab_y_size;
+            drawFromCenter(canvas, star_drawable, screen_x_star, screen_y_star, starsPaint);
         }
     }
 

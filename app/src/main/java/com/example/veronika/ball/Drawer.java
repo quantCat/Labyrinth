@@ -18,8 +18,8 @@ import android.view.View;
 public class Drawer extends View {
     Paint paint;
     Matrix matrix;
-    Rect rectSrc, rectDest;
-    Bitmap bg, static_bg, static_bg_original;
+    Rect rectSrcForBackground, rectDestForBackground;
+    Bitmap farther_background, nearer_background;
     Ball ball = null;
     Labyrinth labyrinth = null;
     float[] values;
@@ -30,11 +30,13 @@ public class Drawer extends View {
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         //paint.setStyle(Paint.Style.FILL_AND_STROKE);
         //paint.setARGB(1, 230, 230, 250);
-        bg = BitmapFactory.decodeResource(context.getResources(), R.drawable.bg);
-        static_bg_original = BitmapFactory.decodeResource(context.getResources(), R.drawable.planks);
-        static_bg = Bitmap.createScaledBitmap(static_bg_original, static_bg_original.getWidth()/2, static_bg_original.getHeight()/2, false);
-        rectSrc = new Rect(0, 0, static_bg.getWidth(), static_bg.getHeight());
-        rectDest = new Rect(0, 0, static_bg.getWidth(), static_bg.getHeight());
+        farther_background = BitmapFactory.decodeResource(context.getResources(), R.drawable.bg);
+        Bitmap nearer_background_original = BitmapFactory.decodeResource(context.getResources(), R.drawable.planks);
+        nearer_background = Bitmap.createScaledBitmap(nearer_background_original,
+                nearer_background_original.getWidth()/2, nearer_background_original.getHeight()/2,
+                false);
+        rectSrcForBackground = new Rect(0, 0, nearer_background.getWidth(), nearer_background.getHeight());
+        rectDestForBackground = new Rect(0, 0, nearer_background.getWidth(), nearer_background.getHeight());
         ball = new Ball();
     }
 
@@ -52,32 +54,14 @@ public class Drawer extends View {
         super.onDraw(canvas);
 
         //canvas.drawColor(Color.rgb(230,230,250));
-        final int bgw = bg.getWidth();
-        for(int x = (int)((bgw - ball.getX() * 2 % bgw) - bgw); x < width; x += bgw)
-            for(int y = (int)((bgw - ball.getY() * 2 % bgw) - bgw); y < height; y += bgw)
-                canvas.drawBitmap(bg, x, y, paint);
-
-        final float min_dim = Math.min(width, height);
-        final float x_viewPoint = (float) width * 100.0f / min_dim;
-        final float y_viewPoint = (float) height * 100.0f / min_dim;
-        final int x_view_min = (int) Math.floor(ball.getX() - x_viewPoint * 0.5f);
-        final int x_view_max = (int) Math.ceil(ball.getX() + x_viewPoint * 0.5f);
-        final int y_view_min = (int) Math.floor(ball.getY() - y_viewPoint * 0.5f);
-        final int y_view_max = (int) Math.ceil(ball.getY() + y_viewPoint * 0.5f);
-
-        float x0 = (0 - x_view_min) * (float) width  / x_viewPoint;
-        float y0 = (0 - y_view_min) * (float) height / y_viewPoint;
-        float x1 = (100 - x_view_min) * (float) width  / x_viewPoint;
-        float y1 = (100 - y_view_min) * (float) height / y_viewPoint;
-        /*for(float x = x0; x < x1; x += 100 * min_dim) {
-            for (float y = y0; y < y1; y += 100 * min_dim) {
-                rectDest.set((int)x, (int)y, (int)(x + 100 * min_dim), (int)(y + 100 * min_dim));
-                canvas.drawBitmap(static_bg, rectSrc, rectDest, paint);
+        final int fbgw = farther_background.getWidth();
+        for(int x = (int)((fbgw - ball.getX() * 2 % fbgw) - fbgw); x < width; x += fbgw) {
+            for (int y = (int) ((fbgw - ball.getY() * 2 % fbgw) - fbgw); y < height; y += fbgw) {
+                canvas.drawBitmap(farther_background, x, y, paint);
             }
-        }*/
-        rectDest.set((int)x0, (int)y0, (int)(x1), (int)(y1));
-        canvas.drawBitmap(static_bg, rectSrc, rectDest, paint);
-        labyrinth.draw(getContext(), canvas, ball, width, height);
+        }
+
+        labyrinth.draw(getContext(), canvas, this, paint, ball, width, height);
         ball.draw(getContext(), canvas, width, height);
     }
 
