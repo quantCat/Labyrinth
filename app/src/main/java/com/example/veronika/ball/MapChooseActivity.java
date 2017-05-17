@@ -11,12 +11,14 @@ import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import java.io.File;
 import java.util.Map;
 import java.util.TreeMap;
 
 public class MapChooseActivity extends Activity {
 
     int map_ids[];
+    boolean has_saving[];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,12 +28,20 @@ public class MapChooseActivity extends Activity {
         Map<String, Integer> map_id_list = getMapIdList();
         RadioGroup radios = (RadioGroup)findViewById(R.id.maplist);
 
+        String storage_path = getFilesDir().getAbsolutePath();
         map_ids = new int[map_list.size()];
+        has_saving = new boolean[map_list.size()];
         int j = 0;
         for (String i: map_list.keySet()) {
             RadioButton rb = new RadioButton(this);
             rb.setId(j);
-            rb.setText(map_list.get(i));
+            File saving_path = new File(storage_path + "/" + Integer.toString(j) + ".save");
+            if (saving_path.canRead()) {
+                has_saving[j] = true;
+                rb.setText(map_list.get(i) + " (saved)");
+            } else {
+                rb.setText(map_list.get(i));
+            }
             map_ids[j] = map_id_list.get(i);
             radios.addView(rb);
             Log.i("MapChooseActivity", String.format("added map: %s", i));
@@ -81,9 +91,13 @@ public class MapChooseActivity extends Activity {
         // TODO
         RadioGroup rg = (RadioGroup) findViewById(R.id.maplist);
         int selected = rg.getCheckedRadioButtonId();
+        if (shall_continue && !has_saving[selected]) {
+            return;
+        }
         if (selected >= 0) {
             Intent intent = new Intent(this, GameActivity.class).
-                    putExtra("MAP", map_ids[selected]);
+                    putExtra("MAP", map_ids[selected]).putExtra("CONTINUE", shall_continue).
+                    putExtra("SAVING_ID", selected);
             startActivity(intent);
             finish();
         }

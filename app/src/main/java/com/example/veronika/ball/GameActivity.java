@@ -2,12 +2,20 @@ package com.example.veronika.ball;
 
 import android.content.Intent;
 import android.media.AudioManager;
+import android.support.annotation.BoolRes;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
+import java.util.Locale;
+import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -20,6 +28,7 @@ public class GameActivity extends AppCompatActivity {
     Labyrinth labyrinth;
     Drawer drawer;
     int game_map_id;
+    int stars = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +44,22 @@ public class GameActivity extends AppCompatActivity {
         drawer = (Drawer) findViewById(R.id.view);
         drawer.ball.labyrinth = labyrinth;
         drawer.labyrinth = labyrinth;
-        drawer.ball.initPosition();
+        if (getIntent().getBooleanExtra("CONTINUE", false)) {
+            try {
+                FileInputStream saving = openFileInput(getSavingFileName());
+                Scanner sc = new Scanner(saving);
+                float x = sc.nextFloat();
+                float y = sc.nextFloat();
+                stars = sc.nextInt();
+                drawer.ball.initPosition(x, y);
+            } catch(java.io.FileNotFoundException _e) {
+                Toast.makeText(this, "Saving file disappeared", Toast.LENGTH_LONG).show();
+                finish();
+            }
+        }
+        else {
+            drawer.ball.initPosition();
+        }
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
     }
 
@@ -85,14 +109,25 @@ public class GameActivity extends AppCompatActivity {
         pc.onPause();
         timer.cancel();
         stopService(new Intent(this, MusicServiceGame.class));
+        String saving_name = getSavingFileName();
+        try {
+            FileOutputStream saving = openFileOutput(saving_name, 0);
+            PrintWriter pw = new PrintWriter(saving);
+            pw.printf(Locale.US, "%g %g %d\n", drawer.ball.getX(), drawer.ball.getY(), stars);
+            pw.flush();
+            Toast.makeText(this, "Game saved", Toast.LENGTH_SHORT).show();
+        } catch (java.io.FileNotFoundException _e) {
+            Toast.makeText(this, "Saving failed", Toast.LENGTH_LONG).show();
+        }
     }
 
     protected void gameFinished(boolean success) {
         Intent game_finished = new Intent(this, GameFinishedActivity.class);
         game_finished.putExtra("STATUS", success ? "WIN" : "LOSE");
         game_finished.putExtra("MAP", game_map_id);
-        int stars = 3;
         game_finished.putExtra("STARS", stars);
+        File saving_path = new File(getFilesDir().getPath() + "/" + getSavingFileName());
+        saving_path.delete();
         startActivity(game_finished);
         finish();
     }
@@ -102,5 +137,9 @@ public class GameActivity extends AppCompatActivity {
         sb.append(String.format("Acc: %.2f %.2f Pos: %.2f %.2f",
                 pc.valuesAccel[0], pc.valuesAccel[1], drawer.ball.getX(), drawer.ball.getY()));
         tvText.setText(sb);
+    }
+
+    String getSavingFileName() {
+        return Integer.toString(getIntent().getIntExtra("SAVING_ID", 0)) + ".save";
     }
 }

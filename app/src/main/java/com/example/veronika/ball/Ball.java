@@ -28,8 +28,17 @@ class Ball {
     public void initPosition() {
         x = labyrinth.start.x;
         y = labyrinth.start.y;
-        prevX = labyrinth.start.x;
-        prevY = labyrinth.start.y;
+        prevX = x;
+        prevY = y;
+        vx = 0;
+        vy = 0;
+    }
+
+    public void initPosition(float x0, float y0) {
+        x = x0;
+        y = y0;
+        prevX = x0;
+        prevY = y0;
         vx = 0;
         vy = 0;
     }
