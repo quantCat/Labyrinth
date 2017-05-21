@@ -87,7 +87,10 @@ public class GameActivity extends AppCompatActivity {
                         drawer = (Drawer)findViewById(R.id.view);
                         drawer.coordChange();
                         labyrinth.checkWallTouchAndReact(drawer);
-                        labyrinth.checkAndReactStarTouch(drawer);
+                        if(labyrinth.checkAndReactStarTouch(drawer)) {
+                            Toast.makeText(drawer.getContext(), "Star collected", Toast.LENGTH_SHORT).show();
+                            stars++;
+                        }
                         boolean hole_touched = labyrinth.checkHoleTouch(drawer);
                         if (hole_touched) {
                             self.gameFinished(false);

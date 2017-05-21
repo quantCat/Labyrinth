@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Region;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -143,7 +144,7 @@ public class Labyrinth {
         Paint starsPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         holesPaint.setColor(0xff110055);
         Bitmap star_bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.star);
-        Bitmap star_drawable = Bitmap.createScaledBitmap(star_bitmap, 10, 10, false);
+        Bitmap star_drawable = Bitmap.createScaledBitmap(star_bitmap, (int)hole_radius*2, (int)hole_radius*2, false);
         for (int i = 0; i < vis_stars.size(); ++i) {
             Point star = vis_stars.get(i);
             float screen_x_star = (star.x - lab_x_view_min)  * (float) width / lab_x_size;
@@ -261,18 +262,19 @@ public class Labyrinth {
         }
     }
 
-    void checkAndReactStarTouch (Drawer drawer) {
+    boolean checkAndReactStarTouch (Drawer drawer) {
         Ball ball = drawer.ball;
         ArrayList<Point> vis_stars = getStarsVisibleAtScreen(ball.getX(), ball.getY(),
                 drawer.getWidth(), drawer.getHeight());
         for (int i = 0; i < vis_stars.size(); i++) {
             Point hole = vis_stars.get(i);
             if (pointIsTouched(hole, ball.getX(), ball.getY())) {
-                vis_stars.remove(i);
-                Log.i("star", "star collected");
+                stars.remove(i);
                 stars_collected++;
+                return true;
             }
         }
+        return false;
     }
 
     boolean checkHoleTouch(Drawer drawer) {
