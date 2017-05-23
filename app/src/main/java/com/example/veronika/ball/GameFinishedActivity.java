@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.io.File;
+
 /**
  * Created by veronika on 23/04/2017.
  */

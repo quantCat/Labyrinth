@@ -10,9 +10,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.Map;
+import java.util.Scanner;
+import java.util.StringTokenizer;
 import java.util.TreeMap;
 
 public class MapChooseActivity extends Activity {
@@ -31,21 +35,39 @@ public class MapChooseActivity extends Activity {
         String storage_path = getFilesDir().getAbsolutePath();
         map_ids = new int[map_list.size()];
         has_saving = new boolean[map_list.size()];
-        int j = 0;
-        for (String i: map_list.keySet()) {
+        int map_index = 0;
+        for (String map_name: map_list.keySet()) {
             RadioButton rb = new RadioButton(this);
-            rb.setId(j);
-            File saving_path = new File(storage_path + "/" + Integer.toString(j) + ".save");
+            rb.setId(map_index);
+            String item_name = map_name;
+            File saving_path = new File(storage_path + "/" + Integer.toString(map_index) + ".save");
             if (saving_path.canRead()) {
-                has_saving[j] = true;
-                rb.setText(map_list.get(i) + " (saved)");
-            } else {
-                rb.setText(map_list.get(i));
+                has_saving[map_index] = true;
+                item_name = item_name + " (saved)";
             }
-            map_ids[j] = map_id_list.get(i);
+
+            File saved_result_path = new File(storage_path + "/" + Integer.toString(map_index) + ".result");
+            if (saved_result_path.canRead()) {
+                int stars = 0;
+                try {
+                    //-FileInputStream saving = openFileInput(getResultFileName());
+                    FileInputStream saving = new FileInputStream(saved_result_path);
+                    Scanner sc = new Scanner(saving);
+                    stars = sc.nextInt();
+                } catch(java.io.FileNotFoundException _e) {
+                    Toast.makeText(this, "Saving file disappeared", Toast.LENGTH_LONG).show();
+                    finish();
+                }
+                Log.i("MapChooseActivity", String.format("Map_name=%s map_index=%d stars=%d saved_result_path=%s",
+                            map_name, map_index, stars, saved_result_path));
+                item_name = item_name + String.format(" <Passed. Stars:%d>", stars);
+            }
+            rb.setText(item_name);
+
+            map_ids[map_index] = map_id_list.get(map_name);
             radios.addView(rb);
-            Log.i("MapChooseActivity", String.format("added map: %s", i));
-            ++j;
+            Log.i("MapChooseActivity", String.format("added map: %s: %s", map_name, item_name));
+            ++map_index;
         }
         final MapChooseActivity self = this;
         Button b;
@@ -77,12 +99,6 @@ public class MapChooseActivity extends Activity {
         }
 
         /////
-        Map<String, Integer> mapIDList = getMapIdList();
-        RadioButton rb = (RadioButton) findViewById(id);
-        int mapId = mapIDList.get(rb.getText());
-        Intent game_intent = new Intent(this, GameActivity.class);
-        game_intent.putExtra("MAP", mapId);
-        startActivity(game_intent);
 
         return super.onMenuItemSelected(featureId, item);
     }
@@ -96,7 +112,8 @@ public class MapChooseActivity extends Activity {
         }
         if (selected >= 0) {
             Intent intent = new Intent(this, GameActivity.class).
-                    putExtra("MAP", map_ids[selected]).putExtra("CONTINUE", shall_continue).
+                    putExtra("MAP", map_ids[selected]).
+                    putExtra("CONTINUE", shall_continue).
                     putExtra("SAVING_ID", selected);
             startActivity(intent);
             finish();

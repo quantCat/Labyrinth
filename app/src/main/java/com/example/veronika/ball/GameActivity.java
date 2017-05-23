@@ -2,7 +2,6 @@ package com.example.veronika.ball;
 
 import android.content.Intent;
 import android.media.AudioManager;
-import android.support.annotation.BoolRes;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +11,7 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.util.Locale;
@@ -27,7 +27,8 @@ public class GameActivity extends AppCompatActivity {
     StringBuilder sb = new StringBuilder();
     Labyrinth labyrinth;
     Drawer drawer;
-    int game_map_id;
+    int game_map_resource_id;
+    int game_map_saving_id;
     int stars = 0;
 
     @Override
@@ -40,6 +41,7 @@ public class GameActivity extends AppCompatActivity {
         tvText = (TextView) findViewById(R.id.tvText);
 
         pc = new PositionCheck(this);
+        game_map_saving_id = getIntent().getIntExtra("SAVING_ID", -1);
         loadLabyrinth();
         drawer = (Drawer) findViewById(R.id.view);
         drawer.ball.labyrinth = labyrinth;
@@ -66,8 +68,8 @@ public class GameActivity extends AppCompatActivity {
     private void loadLabyrinth() {
         labyrinth = new Labyrinth();
         Intent intent = getIntent();
-        game_map_id = intent.getIntExtra("MAP", R.raw.map1);
-        labyrinth.readLabyrinth(this, game_map_id);
+        game_map_resource_id = intent.getIntExtra("MAP", R.raw.map1);
+        labyrinth.readLabyrinth(this, game_map_resource_id);
     }
 
     @Override
@@ -125,9 +127,40 @@ public class GameActivity extends AppCompatActivity {
     }
 
     protected void gameFinished(boolean success) {
+        Log.i("GameActivity", String.format("gameFinished: map: resource_id=%d saving_id=%d stars=%d",
+                    game_map_resource_id, game_map_saving_id, stars));
         Intent game_finished = new Intent(this, GameFinishedActivity.class);
         game_finished.putExtra("STATUS", success ? "WIN" : "LOSE");
-        game_finished.putExtra("MAP", game_map_id);
+        if (success) {
+            int stars_max = 0;
+            String resultFileName = getResultFileName();
+            File resultFile = new File(getFilesDir().getAbsolutePath() + "/" + resultFileName);
+            if (resultFile.canRead()) {
+                try {
+                    FileInputStream result_input = openFileInput(resultFileName);
+                    Scanner sc = new Scanner(result_input);
+                    stars_max = sc.nextInt();
+                } catch (java.io.FileNotFoundException _e) {
+                    Toast.makeText(this, "Result file disappeared", Toast.LENGTH_LONG).show();
+                }
+                Log.i("GameActivity", String.format("old stars_max: %d", stars_max));
+            }
+            if (true || stars > stars_max) {
+                Log.i("GameActivity", String.format("writing result: stars=%d file=%s full_path=%s",
+                            stars, resultFileName, resultFile.getPath()));
+                try {
+                    //-FileOutputStream new_saving = openFileOutput(resultFileName, 0);
+                    FileOutputStream new_saving = new FileOutputStream(resultFile);
+                    PrintWriter pw = new PrintWriter(new_saving);
+                    pw.printf(Locale.US, "%d\n", stars);
+                    pw.flush();
+                    Log.i("GameActivity", "result saved");
+                } catch (FileNotFoundException _e) {
+                    Toast.makeText(this, "Result writing mysteriuosly failed", Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+        game_finished.putExtra("MAP", game_map_resource_id);
         game_finished.putExtra("STARS", stars);
         File saving_path = new File(getFilesDir().getPath() + "/" + getSavingFileName());
         saving_path.delete();
@@ -143,6 +176,10 @@ public class GameActivity extends AppCompatActivity {
     }
 
     String getSavingFileName() {
-        return Integer.toString(getIntent().getIntExtra("SAVING_ID", 0)) + ".save";
+        return Integer.toString(game_map_saving_id) + ".save";
+    }
+
+    String getResultFileName() {
+        return Integer.toString(game_map_saving_id) + ".result";
     }
 }
