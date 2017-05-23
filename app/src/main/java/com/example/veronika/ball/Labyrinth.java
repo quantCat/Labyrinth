@@ -104,7 +104,7 @@ public class Labyrinth {
 
         //WALLS
         Paint wallPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        wallPaint.setColor(0xffbf1faf);
+        wallPaint.setColor(0xff85440c);
         wallPaint.setStrokeWidth(min_dim * 0.02f);
         for (int i = 0; i < vis_walls.size(); ++i) {
             Wall wall = vis_walls.get(i);
@@ -126,7 +126,7 @@ public class Labyrinth {
                 screen_x_start, screen_y_start, screen_x_finish, screen_y_finish));
         positionsPaint.setColor(0xffaa0011);
         canvas.drawCircle(screen_x_start, screen_y_start, point_radius, positionsPaint);
-        positionsPaint.setColor(0xffaa0088);
+        positionsPaint.setColor(0xff11aa11);
         canvas.drawCircle(screen_x_finish, screen_y_finish, point_radius, positionsPaint);
 
         //HOLES
