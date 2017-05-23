@@ -51,14 +51,4 @@ public class SettingsActivity extends AppCompatActivity {
         });
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
     }
-    @Override
-    protected void onResume () {
-        super.onResume();
-        startService(new Intent(this, MusicServiceSet.class));
-    }
-    protected void onPause() {
-        super.onPause();
-        stopService(new Intent(this, MusicServiceSet.class));
-    }
-
 }

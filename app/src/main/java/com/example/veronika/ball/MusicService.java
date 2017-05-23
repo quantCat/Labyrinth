@@ -56,7 +56,7 @@ abstract class MusicService extends Service {
 class MusicServiceGame extends MusicService {
     @Override
     int getMusicId() {
-        return R.raw.tobyfox_waterfall;
+        return R.raw.bonanza;
     }
 }
 
@@ -64,13 +64,5 @@ class MusicServiceMenu extends MusicService {
     @Override
     int getMusicId() {
         return R.raw.beta_love;
-    }
-}
-
-class MusicServiceSet extends MusicService {
-
-    @Override
-    int getMusicId() {
-        return R.raw.eric_carmen__all_by_myself;
     }
 }
