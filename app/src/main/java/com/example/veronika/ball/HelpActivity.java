@@ -26,7 +26,7 @@ public class HelpActivity extends AppCompatActivity {
             }
         });
 
-        final Intent game_intent = new Intent(this, GameActivity.class);
+        final Intent game_intent = new Intent(this, MapChooseActivity.class);
         final Button bsg = (Button) findViewById(R.id.st_btn);
         bsg.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {

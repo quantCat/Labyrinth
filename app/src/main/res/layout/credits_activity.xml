@@ -24,8 +24,8 @@
         android:layout_height="wrap_content"
         android:text="Made by:\n
          Veronika Nechaieva\n
-         Vladislav Shymanovytch\n
-         Pavlo Glyhovskyj\n"
+         Vladislav Shimanovych\n
+         Pavlo Hlukhovskyi\n"
         android:id="@+id/mb"
         android:layout_below="@+id/hamsta"
         android:layout_alignParentStart="true" />
