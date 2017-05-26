@@ -1,11 +1,15 @@
 package com.example.veronika.ball;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.io.File;
@@ -27,6 +31,14 @@ public class GameFinishedActivity extends AppCompatActivity {
         if (game_status.equals("WIN")) {
             gr.setText(String.format("You win!\n" +
                     "Your result saved. Collected stars: %d", stars));
+            Bitmap star_bitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.star);
+            Bitmap star_drawable = Bitmap.createScaledBitmap(star_bitmap, 50, 50, false);
+            LinearLayout stars_layout = (LinearLayout) findViewById(R.id.stars_layout);
+            for (int i = 0; i < stars; i++) {
+                ImageView star_view = new ImageView(this);
+                star_view.setImageBitmap(star_drawable);
+                stars_layout.addView(star_view);
+            }
         } else if (game_status.equals("LOSE")) {
             gr.setText("You lose...");
         } else {

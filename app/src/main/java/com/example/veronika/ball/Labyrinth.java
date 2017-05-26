@@ -68,7 +68,6 @@ public class Labyrinth {
     Point start, finish;
     Point size;
     CollisionsCalculator collisionsCalc = new CollisionsCalculator();
-    int stars_collected = 0;
 
     public void draw(Context context, Canvas canvas, Drawer drawer, Paint nbgPaint,
                      Ball ball, int width, int height) {
@@ -270,7 +269,6 @@ public class Labyrinth {
             Point hole = vis_stars.get(i);
             if (pointIsTouched(hole, ball.getX(), ball.getY())) {
                 stars.remove(i);
-                stars_collected++;
                 return true;
             }
         }

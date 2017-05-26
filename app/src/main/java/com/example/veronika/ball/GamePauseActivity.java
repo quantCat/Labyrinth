@@ -24,11 +24,15 @@ public class GamePauseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.pause_activity);
 
+        final Intent game_intent = new Intent(this, GameActivity.class);
+        final String saving_name = getIntent().getStringExtra("SAVE FILE");
+        game_intent.putExtra("SAVE FILE", saving_name);
+
+
         final Button button_game_save = (Button) findViewById(R.id.button_save);
         button_game_save.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try {
-                    String saving_name = getIntent().getStringExtra("SAVE FILE");
                     float bx = getIntent().getFloatExtra("BALLX", 0);
                     float by = getIntent().getFloatExtra("BALLY", 0);
                     int stars = getIntent().getIntExtra("STARS", 0);
@@ -47,11 +51,11 @@ public class GamePauseActivity extends AppCompatActivity {
         final Activity self = this;
         button_continue.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                NavUtils.navigateUpFromSameTask(self);
+                button_game_save.callOnClick();
+                game_intent.putExtra("CONTINUE", true);
+                startActivity(game_intent);
             }
         });
-
-        final Intent game_intent = new Intent(this, GameActivity.class);
         final Button bsg = (Button) findViewById(R.id.button_restart_p);
         bsg.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {

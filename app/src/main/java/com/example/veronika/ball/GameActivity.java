@@ -29,7 +29,8 @@ public class GameActivity extends AppCompatActivity {
     Drawer drawer;
     int game_map_resource_id;
     int game_map_saving_id;
-    int stars = 0;
+    int stars;
+    boolean finished = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +61,7 @@ public class GameActivity extends AppCompatActivity {
             }
         }
         else {
+            stars = 0;
             drawer.ball.initPosition();
         }
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
@@ -95,9 +97,11 @@ public class GameActivity extends AppCompatActivity {
                         }
                         boolean hole_touched = labyrinth.checkHoleTouch(drawer);
                         if (hole_touched) {
+                            finished = true;
                             self.gameFinished(false);
                         }
                         if (drawer.isGameFinished()) {
+                            finished = true;
                             self.gameFinished(true);
                         }
                     }
@@ -114,6 +118,8 @@ public class GameActivity extends AppCompatActivity {
         pc.onPause();
         timer.cancel();
         stopService(new Intent(this, MusicServiceGame.class));
+        if (finished) return;
+
         Intent pause = new Intent(this, GamePauseActivity.class);
         String saving_name = getSavingFileName();
         pause.putExtra("SAVE FILE", saving_name);
