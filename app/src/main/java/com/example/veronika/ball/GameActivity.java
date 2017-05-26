@@ -114,8 +114,14 @@ public class GameActivity extends AppCompatActivity {
         pc.onPause();
         timer.cancel();
         stopService(new Intent(this, MusicServiceGame.class));
+        Intent pause = new Intent(this, GamePauseActivity.class);
         String saving_name = getSavingFileName();
-        try {
+        pause.putExtra("SAVE FILE", saving_name);
+        pause.putExtra("BALLX", drawer.ball.getX());
+        pause.putExtra("BALLY", drawer.ball.getY());
+        pause.putExtra("STARS", stars);
+        startActivity(pause);
+    /*    try {
             FileOutputStream saving = openFileOutput(saving_name, 0);
             PrintWriter pw = new PrintWriter(saving);
             pw.printf(Locale.US, "%g %g %d\n", drawer.ball.getX(), drawer.ball.getY(), stars);
@@ -123,18 +129,20 @@ public class GameActivity extends AppCompatActivity {
             Toast.makeText(this, "Game saved", Toast.LENGTH_SHORT).show();
         } catch (java.io.FileNotFoundException _e) {
             Toast.makeText(this, "Saving failed", Toast.LENGTH_LONG).show();
-        }
+        }*/
     }
 
     protected void gameFinished(boolean success) {
+
         Log.i("GameActivity", String.format("gameFinished: map: resource_id=%d saving_id=%d stars=%d",
                     game_map_resource_id, game_map_saving_id, stars));
-        Intent game_finished = new Intent(this, GameFinishedActivity.class);
-        game_finished.putExtra("STATUS", success ? "WIN" : "LOSE");
+
         if (success) {
+
             int stars_max = 0;
             String resultFileName = getResultFileName();
             File resultFile = new File(getFilesDir().getAbsolutePath() + "/" + resultFileName);
+
             if (resultFile.canRead()) {
                 try {
                     FileInputStream result_input = openFileInput(resultFileName);
@@ -145,6 +153,7 @@ public class GameActivity extends AppCompatActivity {
                 }
                 Log.i("GameActivity", String.format("old stars_max: %d", stars_max));
             }
+
             if (true || stars > stars_max) {
                 Log.i("GameActivity", String.format("writing result: stars=%d file=%s full_path=%s",
                             stars, resultFileName, resultFile.getPath()));
@@ -159,7 +168,11 @@ public class GameActivity extends AppCompatActivity {
                     Toast.makeText(this, "Result writing mysteriuosly failed", Toast.LENGTH_LONG).show();
                 }
             }
+
         }
+
+        Intent game_finished = new Intent(this, GameFinishedActivity.class);
+        game_finished.putExtra("STATUS", success ? "WIN" : "LOSE");
         game_finished.putExtra("MAP", game_map_resource_id);
         game_finished.putExtra("STARS", stars);
         File saving_path = new File(getFilesDir().getPath() + "/" + getSavingFileName());
