@@ -263,11 +263,9 @@ public class Labyrinth {
 
     boolean checkAndReactStarTouch (Drawer drawer) {
         Ball ball = drawer.ball;
-        ArrayList<Point> vis_stars = getStarsVisibleAtScreen(ball.getX(), ball.getY(),
-                drawer.getWidth(), drawer.getHeight());
-        for (int i = 0; i < vis_stars.size(); i++) {
-            Point hole = vis_stars.get(i);
-            if (pointIsTouched(hole, ball.getX(), ball.getY())) {
+        for (int i = 0; i < stars.size(); i++) {
+            Point star = stars.get(i);
+            if (pointIsTouched(star, ball.getX(), ball.getY())) {
                 stars.remove(i);
                 return true;
             }
