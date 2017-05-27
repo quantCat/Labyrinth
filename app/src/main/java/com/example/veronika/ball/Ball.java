@@ -114,7 +114,7 @@ class Ball {
         float[] touchDetails = collisionsCalc.wallTouchDetailsA(wall, x, y);
         float[] prevTouchDetails = collisionsCalc.wallTouchDetailsA(wall, prevX, prevY);
         if (prevTouchDetails[2] < Radius) {
-            throw new RuntimeException("Ball is already too close");
+            //throw new RuntimeException("Ball is already too close");
         }
         Log.i("Ball.collisionWithWall", String.format("touchDetails: prev: x=%.2f y=%.2f tx=%.2f ty=%.2f dev=%.2f"
                 + "; curr: x=%.2f y=%.2f tx=%.2f ty=%.2f dev=%.2f",
@@ -136,7 +136,7 @@ class Ball {
                     x, y, newTouchDetails[0], newTouchDetails[1], newTouchDetails[3],
                     wall.begin.x, wall.begin.y, wall.end.x, wall.end.y,
                     ort_against.x, ort_against.y));
-            throw new RuntimeException("Tunneled");
+            //throw new RuntimeException("Tunneled");
         }
 
         float wall_vec_x = wall.par_vec.x;

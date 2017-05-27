@@ -38,17 +38,6 @@ public class SettingsActivity extends AppCompatActivity {
         final Button bReturn = (Button) findViewById(R.id.return_btn);
         bReturn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-              /*  try {
-                    BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(
-                            openFileOutput("settings", MODE_PRIVATE)));
-                    bw.write(String.format("%d\n"));
-                    bw.close();
-                    Log.d("File", "File've written");
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }*/
                 NavUtils.navigateUpFromSameTask(self);
             }
         });

@@ -29,8 +29,7 @@ public class GameFinishedActivity extends AppCompatActivity {
         int stars = intent.getIntExtra("STARS", 0);
         TextView gr = (TextView) findViewById(R.id.game_result);
         if (game_status.equals("WIN")) {
-            gr.setText(String.format("You win!\n" +
-                    "Your result saved. Collected stars: %d", stars));
+            gr.setText(String.format("You win!\n" + "Collected stars: %d", stars));
             Bitmap star_bitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.star);
             Bitmap star_drawable = Bitmap.createScaledBitmap(star_bitmap, 50, 50, false);
             LinearLayout stars_layout = (LinearLayout) findViewById(R.id.stars_layout);

@@ -216,20 +216,28 @@ public class GameActivity extends AppCompatActivity {
                 Log.i("GameActivity", String.format("old stars_max: %d", stars_max));
             }
 
-            if (true || stars > stars_max) {
+            if (!resultFile.canRead() || stars > stars_max) {
                 Log.i("GameActivity", String.format("writing result: stars=%d file=%s full_path=%s",
                             stars, resultFileName, resultFile.getPath()));
                 try {
                     //-FileOutputStream new_saving = openFileOutput(resultFileName, 0);
+                     Log.i("GameActivity", "result saved");
+                    if (resultFile.canRead()) {
+                        Toast.makeText(this, "You've beaten your last record! Your result saved.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, "Your result saved.", Toast.LENGTH_SHORT).show();
+                    }
                     FileOutputStream new_saving = new FileOutputStream(resultFile);
                     PrintWriter pw = new PrintWriter(new_saving);
                     pw.printf(Locale.US, "%d\n", stars);
                     pw.flush();
-                    Log.i("GameActivity", "result saved");
                 } catch (FileNotFoundException _e) {
-                    Toast.makeText(this, "Result writing mysteriuosly failed", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Result writing mysteriously failed", Toast.LENGTH_LONG).show();
                 }
             }
+
+            File saving_path = new File(getFilesDir().getPath() + "/" + getSavingFileName());
+            saving_path.delete();
 
         }
 
@@ -237,8 +245,6 @@ public class GameActivity extends AppCompatActivity {
         game_finished.putExtra("STATUS", success ? "WIN" : "LOSE");
         game_finished.putExtra("MAP", game_map_resource_id);
         game_finished.putExtra("STARS", stars);
-        File saving_path = new File(getFilesDir().getPath() + "/" + getSavingFileName());
-        saving_path.delete();
         startActivity(game_finished);
         finish();
     }
