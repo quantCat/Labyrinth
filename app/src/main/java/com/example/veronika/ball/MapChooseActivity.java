@@ -28,8 +28,8 @@ public class MapChooseActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map_chooser_activity);
-        Map<String, String> map_list = getMapList();
-        Map<String, Integer> map_id_list = getMapIdList();
+        Map<String, String> map_list = MapList.getMapList();
+        Map<String, Integer> map_id_list = MapList.getMapIdList();
         RadioGroup radios = (RadioGroup)findViewById(R.id.maplist);
 
         String storage_path = getFilesDir().getAbsolutePath();
@@ -118,33 +118,5 @@ public class MapChooseActivity extends Activity {
             startActivity(intent);
             finish();
         }
-    }
-
-    public Map<String, String> getMapList() {
-        Map r = new TreeMap<>();
-        r.put("Map0_tutorial", "map0_tutorial");
-        r.put("Map1", "map1");
-        r.put("Map2", "map2");
-        r.put("Map3", "map3");
-        r.put("Map4", "map4");
-        r.put("Map5", "map5");
-        r.put("Map6", "map6");
-        r.put("Map7", "map7");
-        r.put("Map_tester", "map");
-        return r;
-    }
-
-    public Map<String, Integer> getMapIdList() {
-        Map r = new TreeMap<>();
-        r.put("Map0_tutorial", R.raw.map0_tutorial);
-        r.put("Map1", R.raw.map1);
-        r.put("Map2", R.raw.map2);
-        r.put("Map3", R.raw.map3);
-        r.put("Map4", R.raw.map4);
-        r.put("Map5", R.raw.map5);
-        r.put("Map6", R.raw.map6);
-        r.put("Map7", R.raw.map7);
-        r.put("Map_tester", R.raw.map);
-        return r;
     }
 }
