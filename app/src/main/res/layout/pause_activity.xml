@@ -29,7 +29,7 @@
             />
 
         <Button
-            android:text="Save and continue"
+            android:text="Continue"
             android:id="@+id/button_continue"
             android:layout_width="match_parent"
             android:layout_height="40dp"

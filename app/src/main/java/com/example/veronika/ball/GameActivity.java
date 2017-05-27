@@ -31,6 +31,13 @@ public class GameActivity extends AppCompatActivity {
     int game_map_saving_id;
     int stars;
     boolean finished = false;
+    boolean pause_activity_started = false;
+    boolean playing_started = false;
+    boolean is_continuing = false;
+    final static int REQUEST_CODE_PAUSE = 1;
+    final static int RCODE_TO_MENU = 0;
+    final static int RCODE_CONTINUE = 1;
+    final static int RCODE_RESTART = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,12 +49,20 @@ public class GameActivity extends AppCompatActivity {
         tvText = (TextView) findViewById(R.id.tvText);
 
         pc = new PositionCheck(this);
-        game_map_saving_id = getIntent().getIntExtra("SAVING_ID", -1);
+        Intent starting_intent = getIntent();
+        game_map_resource_id = starting_intent.getIntExtra("MAP", R.raw.map1);
+        game_map_saving_id = starting_intent.getIntExtra("SAVING_ID", -1);
+        is_continuing = getIntent().getBooleanExtra("CONTINUE", false);
+        initGame();
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
+    }
+
+    void initGame() {
         loadLabyrinth();
         drawer = (Drawer) findViewById(R.id.view);
         drawer.ball.labyrinth = labyrinth;
         drawer.labyrinth = labyrinth;
-        if (getIntent().getBooleanExtra("CONTINUE", false)) {
+        if (is_continuing) {
             try {
                 FileInputStream saving = openFileInput(getSavingFileName());
                 Scanner sc = new Scanner(saving);
@@ -64,13 +79,10 @@ public class GameActivity extends AppCompatActivity {
             stars = 0;
             drawer.ball.initPosition();
         }
-        setVolumeControlStream(AudioManager.STREAM_MUSIC);
     }
 
     private void loadLabyrinth() {
         labyrinth = new Labyrinth();
-        Intent intent = getIntent();
-        game_map_resource_id = intent.getIntExtra("MAP", R.raw.map1);
         labyrinth.readLabyrinth(this, game_map_resource_id);
     }
 
@@ -78,7 +90,14 @@ public class GameActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         pc.onResume();
+        if (!pause_activity_started && !playing_started) {
+            startPlaying();
+        }
+    }
 
+    void startPlaying() {
+        Log.i("GameActivity", String.format("startPlaying: saving_id=%d res_id=%d",
+                game_map_saving_id, game_map_resource_id));
         timer = new Timer();
         final GameActivity self = this;
         TimerTask task = new TimerTask() {
@@ -110,6 +129,7 @@ public class GameActivity extends AppCompatActivity {
         };
         timer.schedule(task, 0, 100);
         startService(new Intent(this, MusicServiceGame.class));
+        playing_started = true;
     }
 
     @Override
@@ -118,15 +138,12 @@ public class GameActivity extends AppCompatActivity {
         pc.onPause();
         timer.cancel();
         stopService(new Intent(this, MusicServiceGame.class));
+        playing_started = false;
         if (finished) return;
 
-        Intent pause = new Intent(this, GamePauseActivity.class);
-        String saving_name = getSavingFileName();
-        pause.putExtra("SAVE FILE", saving_name);
-        pause.putExtra("BALLX", drawer.ball.getX());
-        pause.putExtra("BALLY", drawer.ball.getY());
-        pause.putExtra("STARS", stars);
-        startActivity(pause);
+        if (!pause_activity_started) {
+            startPauseActivity();
+        }
     /*    try {
             FileOutputStream saving = openFileOutput(saving_name, 0);
             PrintWriter pw = new PrintWriter(saving);
@@ -136,6 +153,45 @@ public class GameActivity extends AppCompatActivity {
         } catch (java.io.FileNotFoundException _e) {
             Toast.makeText(this, "Saving failed", Toast.LENGTH_LONG).show();
         }*/
+    }
+
+    public void onBackPressed() {
+        if (!pause_activity_started) {
+            startPauseActivity();
+        }
+    }
+
+    void startPauseActivity() {
+        Intent pause = new Intent(this, GamePauseActivity.class);
+        String saving_name = getSavingFileName();
+        pause.putExtra("SAVE FILE", saving_name);
+        pause.putExtra("BALLX", drawer.ball.getX());
+        pause.putExtra("BALLY", drawer.ball.getY());
+        pause.putExtra("STARS", stars);
+        startActivityForResult(pause, REQUEST_CODE_PAUSE);
+        pause_activity_started = true;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.i("GameActivity", String.format("onActivityResult: %d %d", requestCode, resultCode));
+        if (requestCode == REQUEST_CODE_PAUSE) {
+            pause_activity_started = false;
+            switch (resultCode) {
+                case RCODE_TO_MENU:
+                    finish();
+                    break;
+                case RCODE_CONTINUE: // continue
+                    Log.i("GameActivity", "RCODE_CONTINUE");
+                    // This drops ball speed to 0. FIXME: create a special method for this.
+                    drawer.ball.initPosition(drawer.ball.getX(), drawer.ball.getY());
+                    break;
+                case RCODE_RESTART:
+                    is_continuing = false;
+                    initGame();
+                    break;
+            }
+        }
     }
 
     protected void gameFinished(boolean success) {

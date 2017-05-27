@@ -51,22 +51,23 @@ public class GamePauseActivity extends AppCompatActivity {
         final Activity self = this;
         button_continue.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                button_game_save.callOnClick();
-                game_intent.putExtra("CONTINUE", true);
-                startActivity(game_intent);
+                setResult(GameActivity.RCODE_CONTINUE);
+                finish();
             }
         });
-        final Button bsg = (Button) findViewById(R.id.button_restart_p);
-        bsg.setOnClickListener(new View.OnClickListener() {
+        final Button button_restart = (Button) findViewById(R.id.button_restart_p);
+        button_restart.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                startActivity(game_intent);
+                setResult(GameActivity.RCODE_RESTART);
+                finish();
             }
         });
 
-        final Button bm = (Button) findViewById(R.id.button_to_menu_p);
-        bm.setOnClickListener(new View.OnClickListener() {
+        final Button button_menu = (Button) findViewById(R.id.button_to_menu_p);
+        button_menu.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                NavUtils.navigateUpFromSameTask(self);
+                setResult(GameActivity.RCODE_TO_MENU);
+                finish();
             }
         });
     }
