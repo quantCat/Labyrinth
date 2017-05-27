@@ -36,6 +36,14 @@ public class StartActivity extends AppCompatActivity {
             }
         });
 
+        final Intent settings_intent = new Intent(this, SettingsActivity.class);
+        final Button bsettings = (Button) findViewById(R.id.button_settings);
+        bsettings.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                startActivity(settings_intent);
+            }
+        });
+
         final Intent credits_intent = new Intent(this, CreditsActivity.class).
                 addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         final Button bcredits = (Button) findViewById(R.id.button_credits);
