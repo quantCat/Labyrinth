@@ -23,6 +23,7 @@ public class Drawer extends View {
     Ball ball = null;
     Labyrinth labyrinth = null;
     float[] values;
+    boolean high_speed = false;
 
     public Drawer(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -43,7 +44,7 @@ public class Drawer extends View {
     void coordChange () {
         values = GameActivity.pc.valuesAccel;
         //Log.i("Drawer.coordChange", String.format("%.3f %.3f", values[0], values[1]));
-        ball.coordChange(values[0], values[1]);
+        ball.coordChange(values[0], values[1], high_speed);
         invalidate();
     }
 

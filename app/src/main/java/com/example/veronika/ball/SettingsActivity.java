@@ -1,14 +1,19 @@
 package com.example.veronika.ball;
 
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import java.io.File;
@@ -19,9 +24,35 @@ import java.util.Map;
  */
 
 public class SettingsActivity extends AppCompatActivity {
+
+    SharedPreferences shared_preferences = null;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings_activity);
+        shared_preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean high_speed = shared_preferences.getBoolean("high_speed", true);
+        RadioGroup rg = (RadioGroup) findViewById(R.id.radio_quality);
+        rg.check(high_speed ? R.id.higher_option : R.id.lower_option);
+        final SettingsActivity self = this;
+        final RadioButton rb_low = (RadioButton) findViewById(R.id.lower_option);
+        rb_low.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    self.setHighSpeed(false);
+                }
+            }
+        });
+        final RadioButton rb_high = (RadioButton) findViewById(R.id.higher_option);
+        rb_high.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    self.setHighSpeed(true);
+                }
+            }
+        });
         final Button bClearSavings = (Button) findViewById(R.id.clear_savings_button);
         bClearSavings.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -34,7 +65,6 @@ public class SettingsActivity extends AppCompatActivity {
                 onClearHighscoresButton();
             }
         });
-        final SettingsActivity self = this;
         final Button bReturn = (Button) findViewById(R.id.return_btn);
         bReturn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -42,6 +72,12 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
+    }
+
+    void setHighSpeed(boolean is_high) {
+        SharedPreferences.Editor editor = shared_preferences.edit();
+        editor.putBoolean("high_speed", is_high);
+        editor.apply();
     }
 
     void onClearSavingsButton() {

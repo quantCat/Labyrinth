@@ -1,7 +1,9 @@
 package com.example.veronika.ball;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.AudioManager;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,6 +23,7 @@ import java.util.TimerTask;
 
 public class GameActivity extends AppCompatActivity {
 
+    SharedPreferences shared_preferences = null;
     TextView tvText;
     public static PositionCheck pc;
     Timer timer;
@@ -34,6 +37,7 @@ public class GameActivity extends AppCompatActivity {
     boolean pause_activity_started = false;
     boolean playing_started = false;
     boolean is_continuing = false;
+    boolean high_speed;
     final static int REQUEST_CODE_PAUSE = 1;
     final static int RCODE_TO_MENU = 0;
     final static int RCODE_CONTINUE = 1;
@@ -45,6 +49,8 @@ public class GameActivity extends AppCompatActivity {
         Log.i("trace", "GameActivity.onCreate");
         setContentView(R.layout.activity_main);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        shared_preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        high_speed = shared_preferences.getBoolean("high_speed", false);
 
         tvText = (TextView) findViewById(R.id.tvText);
 
@@ -62,6 +68,7 @@ public class GameActivity extends AppCompatActivity {
         drawer = (Drawer) findViewById(R.id.view);
         drawer.ball.labyrinth = labyrinth;
         drawer.labyrinth = labyrinth;
+        drawer.high_speed = high_speed;
         if (is_continuing) {
             try {
                 FileInputStream saving = openFileInput(getSavingFileName());
@@ -127,7 +134,7 @@ public class GameActivity extends AppCompatActivity {
                 });
             }
         };
-        timer.schedule(task, 0, 100);
+        timer.schedule(task, 0, high_speed ? 40: 100);
         startService(new Intent(this, MusicServiceGame.class));
         playing_started = true;
     }

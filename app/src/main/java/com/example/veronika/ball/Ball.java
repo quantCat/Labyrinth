@@ -50,11 +50,12 @@ class Ball {
         return y;
     }
 
-    public void coordChange (float dX, float dY) {
+    public void coordChange (float dX, float dY, boolean high_speed) {
         prevX = x;
         prevY = y;
-        vx += dX * 0.05;
-        vy += dY * 0.05;
+        final float step = high_speed ? 0.02f : 0.05f;
+        vx += dX * step;
+        vy += dY * step;
         vx *= 0.95; //friction
         vy *= 0.95;
         if (vx >  MAX_SPEED) { vx =  MAX_SPEED; }
