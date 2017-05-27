@@ -68,7 +68,6 @@ public class Labyrinth {
     Point start, finish;
     Point size;
     CollisionsCalculator collisionsCalc = new CollisionsCalculator();
-    int stars_collected = 0;
 
     public void draw(Context context, Canvas canvas, Drawer drawer, Paint nbgPaint,
                      Ball ball, int width, int height) {
@@ -264,13 +263,10 @@ public class Labyrinth {
 
     boolean checkAndReactStarTouch (Drawer drawer) {
         Ball ball = drawer.ball;
-        ArrayList<Point> vis_stars = getStarsVisibleAtScreen(ball.getX(), ball.getY(),
-                drawer.getWidth(), drawer.getHeight());
-        for (int i = 0; i < vis_stars.size(); i++) {
-            Point hole = vis_stars.get(i);
-            if (pointIsTouched(hole, ball.getX(), ball.getY())) {
+        for (int i = 0; i < stars.size(); i++) {
+            Point star = stars.get(i);
+            if (pointIsTouched(star, ball.getX(), ball.getY())) {
                 stars.remove(i);
-                stars_collected++;
                 return true;
             }
         }

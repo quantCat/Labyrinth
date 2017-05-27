@@ -27,6 +27,13 @@
         android:layout_weight="0.11" />
 
     <Button
+        android:text="SETTINGS"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/button_settings"
+        android:layout_weight="0.17" />
+
+    <Button
         android:text="CREDITS"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
